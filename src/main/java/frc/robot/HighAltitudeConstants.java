@@ -222,4 +222,26 @@ public class HighAltitudeConstants {
 
         public static final double SWERVE_MPS_STEP = 0;
 
+        public static final double SWERVE_DIRECTION_ON_TARGET = 0;
+
+
+        ///     PROFILED PID CONTROLLER         ///
+
+        //      CONSTRAINTS     //
+        public static final double SWERVE_DIRECTION_MAX_VELOCITY = 0;
+        public static final double SWERVE_DIRECTION_MAX_ACCELERATION = 0;
+
+        //      FEEDBACK     //
+        public static final double SWERVE_DIRECTION_kP = 0;
+        public static final double SWERVE_DIRECTION_kI = 0;
+        public static final double SWERVE_DIRECTION_kD = 0;
+
+        //      FEEDFORWARD     //
+        public static final double SWERVE_DIRECTION_kS = 0;
+        public static final double SWERVE_DIRECTION_kV = 0;
+        public static final double SWERVE_DIRECTION_kA = 0;
+
+
+        
+
 }

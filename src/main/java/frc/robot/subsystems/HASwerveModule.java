@@ -11,25 +11,34 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.HighAltitudeConstants;
 import frc.robot.resources.components.speedController.HighAltitudeMotorController;
 import frc.robot.resources.components.speedController.HighAltitudeMotorController.TypeOfMotor;
 import frc.robot.resources.math.Math;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 
 /** Add your docs here. */
 public class HASwerveModule {
     // another High Altitude Swerve Module Class, this time made by Gomez & Joaquín
-
-    private HighAltitudeMotorController driveMotor;
+    /// DIRECTION ///
     private HighAltitudeMotorController directionMotor;
-
-    private boolean isDriveEncoderReversed;
     private boolean isDirectionEncoderReversed;
 
-    private PIDController directionPIDController;
+    private final ProfiledPIDController directionProfiledPIDController;
+    private TrapezoidProfile.Constraints swConstraints;
+
+    private double directionLastSpeed = 0;
+    private double lastTime = Timer.getFPGATimestamp();
+
     private SimpleMotorFeedforward directionFeedforward;
     private double currentAngleDirectionPower;
+
+    /// DRIVE ///
+    private HighAltitudeMotorController driveMotor;
+    private boolean isDriveEncoderReversed;
 
     private PIDController drivePIDController;
     private SimpleMotorFeedforward driveFeedforward;
@@ -58,10 +67,17 @@ public class HASwerveModule {
         this.isDirectionEncoderReversed = isDirectionEncoderReversed;
 
         // DIRECTION CONTROL //
-        directionPIDController = new PIDController(0, 0, 0); // 0.128, 0.01, 0.0128
-        directionPIDController.enableContinuousInput(-Math.PI, Math.PI);
+        // 0.128, 0.01, 0.0128
+        directionProfiledPIDController = new ProfiledPIDController(HighAltitudeConstants.SWERVE_DIRECTION_kP,
+                HighAltitudeConstants.SWERVE_DIRECTION_kI, HighAltitudeConstants.SWERVE_DIRECTION_kD,
+                new TrapezoidProfile.Constraints(HighAltitudeConstants.SWERVE_DIRECTION_MAX_VELOCITY,
+                        HighAltitudeConstants.SWERVE_DIRECTION_MAX_ACCELERATION));
 
-        directionFeedforward = new SimpleMotorFeedforward(0, 0, 0);
+        directionProfiledPIDController.enableContinuousInput(-Math.PI, Math.PI);
+
+        directionFeedforward = new SimpleMotorFeedforward(HighAltitudeConstants.SWERVE_DIRECTION_kS,
+                HighAltitudeConstants.SWERVE_DIRECTION_kV,
+                HighAltitudeConstants.SWERVE_DIRECTION_kA);
 
         // DRIVE CONTROL //
         driveFeedforward = new SimpleMotorFeedforward(0, 0);
@@ -84,6 +100,12 @@ public class HASwerveModule {
 
     public double getAbsoluteEncoderRaw() {
         return absoluteEncoderController.getPosition().getValueAsDouble();
+    }
+
+    public double getEncoderVelocity() {
+        return absoluteEncoderController.getVelocity().getValueAsDouble() * 2 * Math.PI
+                * (isTalonEncoderReversed ? -1.0 : 1.0);
+
     }
 
     ///// MOTOR ENCODERS /////
@@ -154,7 +176,8 @@ public class HASwerveModule {
      * //no sé si poner este o getDriveVelocity
      * driveMotor.set(feedforward + pidOutput);
      * 
-     * directionMotor.set(directionPIDController.calculate(getAbsoluteEncoderRAD(),
+     * directionMotor.set(directionProfiledPIDController.calculate(
+     * getAbsoluteEncoderRAD(),
      * state.angle.getRadians()));
      * }
      */
@@ -166,8 +189,8 @@ public class HASwerveModule {
         }
 
         state = SwerveModuleState.optimize(state, getState().angle);
-        driveMotor.set(state.speedMetersPerSecond);
-        directionMotor.set(directionPIDController.calculate(getAbsoluteEncoderRAD(), state.angle.getRadians()));
+        controlSwerveDirection(state.angle.getRadians());
+        controlSwerveSpeed(state.speedMetersPerSecond);
     }
 
     public boolean onMPSTarget() {
@@ -178,35 +201,41 @@ public class HASwerveModule {
         currentMPSDrivePower = power;
     }
 
-    public void driveMotor(double speed) {
-        driveMotor.set(speed);
-    }
-
-    public boolean swerveDriveMPS(int mps) {
-        double delta = mps - getDriveVelocity();
-        this.currentMPSDrivePower += delta * HighAltitudeConstants.SWERVE_MPS_STEP;
-        driveMotor(currentMPSDrivePower);
-
-        SmartDashboard.putNumber(" Swerve Drive MPS ", currentMPSDrivePower);
-
-        mpsOnTarget = (Math.abs(delta) <= HighAltitudeConstants.SWERVE_DRIVE_ON_TARGET);
-        return mpsOnTarget;
-    }
-
-    public boolean controlSwerveDrive(int mps) {
+    public void controlSwerveSpeed(double mps) {
         double driveOutput = driveFeedforward.calculate(mps);
         driveOutput += drivePIDController.calculate(getDriveVelocity(), mps);
-        driveMotor(driveOutput);
+        driveMotor.setVoltage(driveOutput);
 
         double delta = mps - getDriveVelocity();
 
         mpsOnTarget = (Math.abs(delta) <= HighAltitudeConstants.SWERVE_DRIVE_ON_TARGET);
-        SmartDashboard.putBoolean("Swerve onTarget", Math.abs(delta) <= HighAltitudeConstants.SWERVE_DRIVE_ON_TARGET);
-        return mpsOnTarget;
+        // SmartDashboard.putBoolean("Drive Swerve onTarget", Math.abs(delta) <=
+        // HighAltitudeConstants.SWERVE_DRIVE_ON_TARGET);
+        return;
     }
 
-    public PIDController getDirectionPIDController() {
-        return directionPIDController;
+    public void controlSwerveDirection(double angleTarget) {
+        double pidVal = directionProfiledPIDController.calculate(getDirectionEncoder(),
+                angleTarget);
+        double targetSpeed = directionProfiledPIDController.getSetpoint().velocity;
+
+        double directionAcceleration = (targetSpeed - directionLastSpeed) / (Timer.getFPGATimestamp() - lastTime);
+        double feedforwardVal = directionFeedforward.calculate(targetSpeed, directionAcceleration);
+
+        double directionOutput = pidVal + feedforwardVal;
+
+        directionMotor.setVoltage(directionOutput);
+        directionLastSpeed = targetSpeed;
+        lastTime = Timer.getFPGATimestamp();
+
+        double delta = currentAngleDirectionPower - getAbsoluteEncoderRAD();
+
+        // SmartDashboard.putBoolean("Direction Swerve onTarget", Math.abs(delta) <=
+        // HighAltitudeConstants.SWERVE_DIRECTION_ON_TARGET);
+    }
+
+    public ProfiledPIDController getDirectionPIDController() {
+        return directionProfiledPIDController;
     }
 
     public PIDController getDrivePIDController() {
@@ -218,4 +247,35 @@ public class HASwerveModule {
         directionMotor.set(0);
     }
 
+    // Smartdashboard prints for debugging.
+
+    public void putRawEncoderValues(String identifier) {
+        SmartDashboard.putNumber(identifier + "DriveEncPos", driveMotor.getEncPosition());
+        SmartDashboard.putNumber(identifier + "DirEncPos", directionMotor.getEncPosition());
+        SmartDashboard.putNumber(identifier + "AbsEncPos", absoluteEncoderController.getPosition().getValueAsDouble());
+    }
+
+    public void putEncoderValuesInvertedApplied(String identifier) {
+        SmartDashboard.putNumber(identifier + "DriveEncPos", getDriveEncoder());
+        SmartDashboard.putNumber(identifier + "DirEncPos", getDirectionEncoder());
+        SmartDashboard.putNumber(identifier + "AbsEncPos",
+                absoluteEncoderController.getPosition().getValueAsDouble() * (isTalonEncoderReversed ? -1.0 : 1.0));
+    }
+
+    public void putProcessedValues(String identifier) {
+        SmartDashboard.putNumber(identifier + "DrivePos", getDriveDistance());
+        SmartDashboard.putNumber(identifier + "DirPos", getDirection());
+        SmartDashboard.putNumber(identifier + "AbsPos", getAbsoluteEncoderRAD());
+        SmartDashboard.putNumber(identifier + "AbsRawPos", absoluteEncoderController.getPosition().getValueAsDouble());
+    }
+
+    public void putMotorOutputs(String identifier) {
+        SmartDashboard.putNumber(identifier + "DriveOut", driveMotor.getOutput());
+        SmartDashboard.putNumber(identifier + "DirOut", directionMotor.getOutput());
+    }
+
+    public void putTestPID(String identifier, SwerveModuleState state) {
+        state = SwerveModuleState.optimize(state, getState().angle);
+        SmartDashboard.putNumber(identifier + "PID", state.angle.getRadians());
+    }
 }
