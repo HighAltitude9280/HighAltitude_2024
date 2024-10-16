@@ -8,19 +8,21 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import frc.robot.subsystems.swerve.HASwerveModule;
 
 /** Add your docs here. */
 public class HighAltitudeConstants {
 
         ////////////////////////// SWERVE //////////////////////////
 
-        public static final double MAX_VOLTAGE = 12;
+        public static final double MAX_VOLTAGE = 12.5;
 
         /// CONSTANTS FOR MK4i L4 Config DRIVE MOTOR ///
         // In meters
@@ -68,10 +70,28 @@ public class HighAltitudeConstants {
 
         /////////// DRIVING MOTOR ///////////
 
+        // HOW TO GET THE VALUES //
+        /*
+         * Necesitas la gráfica de velocidad del encoder del driveMotor
+         * 
+         * PASO 1:
+         * 1. PID en 0
+         * 2. kS dejarla en 0
+         * 3. Tunear kV hasta que la velocidad esté en target
+         * 
+         * PASO 2:
+         * 4. Ya no mueves el feedforward
+         * 5. Poner la kP lo más grande que pueda sin que se pase del target
+         * 6. Poner la kD lo más alto que pueda, sin que empiece a dar picos extraños,
+         * que quede smooth
+         */
+
+        // FEEDBACK //
         public static final double SWERVE_DRIVE_kP = 0;
         public static final double SWERVE_DRIVE_kI = 0;
         public static final double SWERVE_DRIVE_kD = 0;
 
+        // FEEDFORWARD //
         public static final double SWERVE_DRIVE_kS = 0;
         public static final double SWERVE_DRIVE_kV = 0;
 
@@ -92,6 +112,9 @@ public class HighAltitudeConstants {
 
         public static final double SWERVE_DRIVE_FEEDFORWARD_GAIN = 0;
 
+        public static final double SWERVE_DRIVE_CLEANUP_MODE_SPEED_METERS_PER_SECOND = SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND
+                        * 0.8;
+
         // Arbitrary to make controlling the swerve easier in teleop
         /*
          * public static final double SWERVE_DRIVE_TELEOP_MAX_SPEED_METERS_PER_SECOND =
@@ -99,7 +122,7 @@ public class HighAltitudeConstants {
          * 0.8;
          */
 
-        /////////// DIRECTION MOTOR
+        /////////// DIRECTION MOTOR ///////////
 
         // The reported encoder position after one revolution, check encoder
         // specifications.
@@ -127,17 +150,40 @@ public class HighAltitudeConstants {
          * 0.75;
          */
 
-        //// DIRECTION PID
+        //// DIRECTION PID ////
+
         /// PROFILED PID CONTROLLER FOR SWERVE DIRECTION ///
 
         // CONSTRAINTS //
         public static final double SWERVE_DIRECTION_MAX_VELOCITY = 0;
         public static final double SWERVE_DIRECTION_MAX_ACCELERATION = 0;
 
+        // HOW TO GET THE VALUES //
+        /*
+         * Necesitas las graficas: a) Gráfica del angúlo
+         * b) Gráfica de velocidad del encoder
+         * c) Gráfica de aceleración
+         * d) Setpoint del ángulo
+         * e) Setpoint de la velocidad
+         * f) Setpoint de aceleración
+         * 
+         * PASO 1:
+         * 1. PID en 0
+         * 2. kS dejarla en 0
+         * 3. Tunear kV hasta que la velocidad esté en target
+         * 
+         * PASO 2:
+         * 4. Ya no mueves el feedforward
+         * 5. Poner la kP lo más grande que pueda sin que se pase del target
+         * 6. Poner la kD lo más alto que pueda, sin que empiece a dar picos extraños,
+         * que quede smooth
+         */
+
         // FEEDBACK //
-        public static final double SWERVE_DIRECTION_kP = 0;
-        public static final double SWERVE_DIRECTION_kI = 0;
-        public static final double SWERVE_DIRECTION_kD = 0;
+
+        public static final double SWERVE_DIRECTION_kP = 0; // 0.128
+        public static final double SWERVE_DIRECTION_kI = 0; // 0.01
+        public static final double SWERVE_DIRECTION_kD = 0; // 0.0128
 
         // FEEDFORWARD //
         public static final double SWERVE_DIRECTION_kS = 0;
@@ -242,9 +288,7 @@ public class HighAltitudeConstants {
         public static final Pose2d AMP_POS = new Pose2d(new Translation2d(3., 4.31), new Rotation2d(-Math.PI / 2));
 
         public static final double SWERVE_DRIVE_ON_TARGET = 0;
-
         public static final double SWERVE_MPS_STEP = 0;
-
         public static final double SWERVE_DIRECTION_ON_TARGET = 0;
 
 }
