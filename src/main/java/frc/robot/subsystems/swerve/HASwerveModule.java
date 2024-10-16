@@ -39,7 +39,6 @@ public class HASwerveModule {
     private double lastEncoderVelocityEnc = 0;
     private double lastTimeEnc = Timer.getFPGATimestamp();
 
-    private double directionLastSpeedAcc = 0;
     private double lastTimeAcc = Timer.getFPGATimestamp();
 
     private double directionLastSpeed = 0;
@@ -224,7 +223,7 @@ public class HASwerveModule {
         directionLastSpeed = targetSpeed;
         lastTime = Timer.getFPGATimestamp();
 
-        directionPIDAccelerationSetPoint = (targetSpeed - directionLastSpeedAcc)
+        directionPIDAccelerationSetPoint = (targetSpeed - directionLastSpeed)
                 / (Timer.getFPGATimestamp() - lastTimeAcc);
         directionPIDAngleSetPoint = getDirectionPIDController().getSetpoint().position;
         directionPIDVelocitySetPoint = getDirectionPIDController().getSetpoint().velocity;

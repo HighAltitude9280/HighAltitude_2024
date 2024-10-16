@@ -366,19 +366,22 @@ public class SwerveDriveTrain extends SubsystemBase {
     }
   }
 
-  public Command pathfindToPose(Pose2d targetPose) {
-    PathConstraints constraints = new PathConstraints(
-        HighAltitudeConstants.PATHFINDING_MAX_LINEAR_SPEED,
-        HighAltitudeConstants.PATHFINDING_MAX_LINEAR_ACCELERATION,
-        HighAltitudeConstants.PATHFINDING_MAX_ANGULAR_SPEED,
-        HighAltitudeConstants.PATHFINDING_MAX_ANGULAR_ANGULAR_ACCELERATION);
-
-    Subsystem swerve = this;
-    Command pathCommand = new PathfindHolonomic(targetPose, constraints, this::getPose, this::getChassisSpeeds,
-        this::driveRobotRelative, HighAltitudeConstants.pathFollowerConfig, swerve);
-
-    return pathCommand;
-  }
+  /*
+   * public Command pathfindToPose(Pose2d targetPose) {
+   * PathConstraints constraints = new PathConstraints(
+   * HighAltitudeConstants.PATHFINDING_MAX_LINEAR_SPEED,
+   * HighAltitudeConstants.PATHFINDING_MAX_LINEAR_ACCELERATION,
+   * HighAltitudeConstants.PATHFINDING_MAX_ANGULAR_SPEED,
+   * HighAltitudeConstants.PATHFINDING_MAX_ANGULAR_ANGULAR_ACCELERATION);
+   * 
+   * Subsystem swerve = this;
+   * Command pathCommand = new PathfindHolonomic(targetPose, constraints,
+   * this::getPose, this::getChassisSpeeds,
+   * this::driveRobotRelative, HighAltitudeConstants.pathFollowerConfig, swerve);
+   * 
+   * return pathCommand;
+   * }
+   */
 
   public ChassisSpeeds getChassisSpeeds() {
     return HighAltitudeConstants.SWERVE_KINEMATICS.toChassisSpeeds(
@@ -447,8 +450,8 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateOdometry();
-    updateOdometryWithVision();
+    // updateOdometry();
+    // updateOdometryWithVision();
     putAllInfoInSmartDashboard();
   }
 
@@ -458,40 +461,12 @@ public class SwerveDriveTrain extends SubsystemBase {
     frontRight.putProcessedValues("FR");
     backRight.putProcessedValues("BR");
     backLeft.putProcessedValues("BL");
-    frontLeft.putEncoderValuesInvertedApplied("FL");
-    frontRight.putEncoderValuesInvertedApplied("FR");
-    backLeft.putEncoderValuesInvertedApplied("BL");
-    backRight.putEncoderValuesInvertedApplied("BR");
-
-    SmartDashboard.putNumber("FL Steer Power",
-        frontLeft.getDirectionMotor().getOutput());
-    SmartDashboard.putNumber("FR Steer Power",
-        frontRight.getDirectionMotor().getOutput());
-    SmartDashboard.putNumber("BL Steer Power",
-        backLeft.getDirectionMotor().getOutput());
-    SmartDashboard.putNumber("BR Steer Power",
-        backRight.getDirectionMotor().getOutput());
-
-    SmartDashboard.putNumber("FL Target",
-        frontLeft.getPIDController().getSetpoint());
-    SmartDashboard.putNumber("FL Current", frontLeft.getAbsoluteEncoderRad());
-    SmartDashboard.putNumber("FR Target",
-        frontRight.getPIDController().getSetpoint());
-    SmartDashboard.putNumber("FR Current", frontRight.getAbsoluteEncoderRad());
-    SmartDashboard.putNumber("BL Target",
-        backLeft.getPIDController().getSetpoint());
-    SmartDashboard.putNumber("BL Current", backLeft.getAbsoluteEncoderRad());
-    SmartDashboard.putNumber("BR Target",
-        backRight.getPIDController().getSetpoint());
-    SmartDashboard.putNumber("BR Current", backRight.getAbsoluteEncoderRad());
-
-    SmartDashboard.putNumber("Odometry X", swerveDrivePoseEstimator.getEstimatedPosition().getX());
-    SmartDashboard.putNumber("Odometry Y", swerveDrivePoseEstimator.getEstimatedPosition().getY());
-    SmartDashboard.putNumber("Odometry Degree",
-        swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
-
-    SmartDashboard.putNumber("XSpeed", getChassisSpeeds().vxMetersPerSecond);
-    SmartDashboard.putNumber("YSpeed", getChassisSpeeds().vyMetersPerSecond);
-
+    
+    /*
+     * frontLeft.putEncoderValuesInvertedApplied("FL");
+     * frontRight.putEncoderValuesInvertedApplied("FR");
+     * backLeft.putEncoderValuesInvertedApplied("BL");
+     * backRight.putEncoderValuesInvertedApplied("BR");
+     */
   }
 }

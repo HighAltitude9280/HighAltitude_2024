@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import frc.robot.Human_Drivers.HumanDrivers;
 import frc.robot.subsystems.swerve.HASwerveModule;
 
 /** Add your docs here. */
@@ -28,14 +29,14 @@ public class HighAltitudeConstants {
         // In meters
         public static final double SWERVE_WHEEL_DIAMETER = 4 * 0.0254;
         // NEVER, ABSOLUTELY NEVER APPROXIMATE THIS, USE ONLY FRACTIONS WITH WHOLE
-        // NUMBERS. (Driven / Driver) //pinion
+        // NUMBERS. (Driven / Driver)                                                //pinion
         public static final double SWERVE_DRIVE_GEAR_RATIO = (50.0 * 16.0 * 45.0) / (16.0 * 28.0 * 15.0);
         // ft/s //ft -> in //im -> m
         public static final double SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND = 20.4 * 12 * 0.0254;
 
         /////////// KINEMATICS
         // Distance left - right (meters)
-        public static final double SWERVE_TRACK_WIDTH = 26 * 0.0254;
+        public static final double SWERVE_TRACK_WIDTH = 26 * 0.0254; //este es de llanta a llanta
         // Distance front - back (meters)
         public static final double SWERVE_WHEEL_BASE = 23 * 0.0254;
 
@@ -58,8 +59,8 @@ public class HighAltitudeConstants {
         // Arbitrary. Higher numbers will cause the swerve to react more violently to
         // joysitck inputs and may not be ideal. Lower numbers will cause the swerve to
         // have a very slow reaction to joystick inputs, and may not be ideal.
-        public static final double SWERVE_MAX_ACCELERATION_UNITS_PER_SECOND = 15.0;
-        public static final double SWERVE_MAX_ANGULAR_ACCELERATION_UNITS_PER_SECOND = 15.0;
+        public static final double SWERVE_MAX_ACCELERATION_UNITS_PER_SECOND = 20.0;
+        public static final double SWERVE_MAX_ANGULAR_ACCELERATION_UNITS_PER_SECOND = 20.0;
 
         // Other
 
@@ -178,7 +179,6 @@ public class HighAltitudeConstants {
          * 6. Poner la kD lo más alto que pueda, sin que empiece a dar picos extraños,
          * que quede smooth
          */
-
         // FEEDBACK //
 
         public static final double SWERVE_DIRECTION_kP = 0; // 0.128
@@ -276,6 +276,9 @@ public class HighAltitudeConstants {
         public static final double SHOOTER_PIVOT_ZERO_ANGLE = 0; // 65.0;
 
         //////////////////////// DRIVERS ////////////////////////
+
+        public static final HumanDrivers CURRENT_PILOT = HumanDrivers.Joakin;
+        public static final HumanDrivers CURRENT_COPILOT = HumanDrivers.Joakin;
 
         ////////////////////////////// Pathfinding ////////////////////////}
 
