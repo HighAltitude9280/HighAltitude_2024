@@ -22,14 +22,14 @@ public class HighAltitudeConstants {
 
         public static final double MAX_VOLTAGE = 12;
 
-        ///   CONSTANTS FOR MK4i L4 Config DRIVE MOTOR  ///
+        /// CONSTANTS FOR MK4i L4 Config DRIVE MOTOR ///
         // In meters
         public static final double SWERVE_WHEEL_DIAMETER = 4 * 0.0254;
         // NEVER, ABSOLUTELY NEVER APPROXIMATE THIS, USE ONLY FRACTIONS WITH WHOLE
-        // NUMBERS. (Driven / Driver)                                               //pinion
-        public static final double SWERVE_DRIVE_GEAR_RATIO = (50.0 * 16.0 * 45.0) / ( 16.0  * 28.0 * 15.0);
-                                                                             //ft/s   //ft -> in  //im -> m
-        public static final double SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND = 20.4  *     12   *   0.0254;
+        // NUMBERS. (Driven / Driver) //pinion
+        public static final double SWERVE_DRIVE_GEAR_RATIO = (50.0 * 16.0 * 45.0) / (16.0 * 28.0 * 15.0);
+        // ft/s //ft -> in //im -> m
+        public static final double SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND = 20.4 * 12 * 0.0254;
 
         /////////// KINEMATICS
         // Distance left - right (meters)
@@ -66,7 +66,14 @@ public class HighAltitudeConstants {
         public static final double SWERVE_ABSOLUTE_ENCODER_RADIANS_PER_PULSE = (2.0 * Math.PI)
                         / SWERVE_ABSOLUTE_ENCODER_PULSES_PER_REVOLUTION;
 
-        ///////////   DRIVING MOTOR   ///////////
+        /////////// DRIVING MOTOR ///////////
+
+        public static final double SWERVE_DRIVE_kP = 0;
+        public static final double SWERVE_DRIVE_kI = 0;
+        public static final double SWERVE_DRIVE_kD = 0;
+
+        public static final double SWERVE_DRIVE_kS = 0;
+        public static final double SWERVE_DRIVE_kV = 0;
 
         // The reported encoder position after one revolution, check encoder
         // specifications.
@@ -83,13 +90,14 @@ public class HighAltitudeConstants {
         public static final double SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS = (SWERVE_DRIVE_METERS_PER_PULSE)
                         / 60;
 
-         public static final double SWERVE_DRIVE_FEEDFORWARD_GAIN = 0;
-
-        
+        public static final double SWERVE_DRIVE_FEEDFORWARD_GAIN = 0;
 
         // Arbitrary to make controlling the swerve easier in teleop
-        /*public static final double SWERVE_DRIVE_TELEOP_MAX_SPEED_METERS_PER_SECOND = SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND
-                        * 0.8;*/
+        /*
+         * public static final double SWERVE_DRIVE_TELEOP_MAX_SPEED_METERS_PER_SECOND =
+         * SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND
+         * 0.8;
+         */
 
         /////////// DIRECTION MOTOR
 
@@ -113,12 +121,28 @@ public class HighAltitudeConstants {
                         * SWERVE_DIRECTION_RADIANS_PER_PULSE)
                         / SWERVE_DIRECTION_VELOCITY_SAMPLE_RATE_MS;
 
-        /*public static final double SWERVE_DIRECTION_TELEOP_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI * 0.75;*/
+        /*
+         * public static final double
+         * SWERVE_DIRECTION_TELEOP_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI *
+         * 0.75;
+         */
 
         //// DIRECTION PID
-        public static final double SWERVE_DIRECTION_BRAKING_RADIANS = (Math.PI * 2) / 4; // 2pi/3
-        public static final double SWERVE_DIRECTION_KP = 0.0;
-        public static final double SWERVE_DIRECTION_KD = 0.0;
+        /// PROFILED PID CONTROLLER FOR SWERVE DIRECTION ///
+
+        // CONSTRAINTS //
+        public static final double SWERVE_DIRECTION_MAX_VELOCITY = 0;
+        public static final double SWERVE_DIRECTION_MAX_ACCELERATION = 0;
+
+        // FEEDBACK //
+        public static final double SWERVE_DIRECTION_kP = 0;
+        public static final double SWERVE_DIRECTION_kI = 0;
+        public static final double SWERVE_DIRECTION_kD = 0;
+
+        // FEEDFORWARD //
+        public static final double SWERVE_DIRECTION_kS = 0;
+        public static final double SWERVE_DIRECTION_kV = 0;
+        public static final double SWERVE_DIRECTION_kA = 0;
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
                         new PIDConstants(0.9, 0, 0.000025), // Translation constants
@@ -131,8 +155,8 @@ public class HighAltitudeConstants {
 
         //// SpeedReduction constants
 
-        public static final double SWERVE_TURN_BRAKE_DISTANCE = 0; //32.0;
-        public static final double SWERVE_TURN_ARRIVE_OFFSET = 0; //3.0;
+        public static final double SWERVE_TURN_BRAKE_DISTANCE = 0; // 32.0;
+        public static final double SWERVE_TURN_ARRIVE_OFFSET = 0; // 3.0;
 
         //// VISION
 
@@ -183,28 +207,27 @@ public class HighAltitudeConstants {
         public static final double SHOOTER_PIVOT_DEGREES_PER_REVOLUTION = 360
                         / SHOOTER_PIVOT_RATIO;
 
-        public static final double SHOOTER_PIVOT_BRAKING_DEGREES = 0; //50;
+        public static final double SHOOTER_PIVOT_BRAKING_DEGREES = 0; // 50;
 
-        public static final double SHOOTER_PIVOT_ARRIVE_OFFSET = 0; //0.05;
+        public static final double SHOOTER_PIVOT_ARRIVE_OFFSET = 0; // 0.05;
 
         public static final double SHOOTER_PIVOT_ABSOLUTE_ENCODER_DEGREES_PER_PULSE = 360
                         / SHOOTER_PIVOT_RATIO;
 
         public static final double SHOOTER_PIVOT_AUTO_MAX_POWER = 0.5;
 
-        public static final double SHOOTER_PIVOT_UPPER_LIMIT = 0; //107.7;
+        public static final double SHOOTER_PIVOT_UPPER_LIMIT = 0; // 107.7;
         // 107.666015625 Shuffle Report
 
         public static final double SHOOTER_PIVOT_LOWER_LIMIT = 0.0;
         // 0.17578125 Shuffle Report
 
-        public static final double SHOOTER_PIVOT_ANGLE_CORRECTION_CONSTANT = 0; //20;
+        public static final double SHOOTER_PIVOT_ANGLE_CORRECTION_CONSTANT = 0; // 20;
 
-        public static final double SHOOTER_PIVOT_PITCH_TO_TARGET_MULTIPLIER =0; //-0.003;
-        public static final double SHOOTER_PIVOT_PITCH_TO_TARGET_OFFSET = 0; //.18;
+        public static final double SHOOTER_PIVOT_PITCH_TO_TARGET_MULTIPLIER = 0; // -0.003;
+        public static final double SHOOTER_PIVOT_PITCH_TO_TARGET_OFFSET = 0; // .18;
 
-        public static final double SHOOTER_PIVOT_ZERO_ANGLE = 0; //65.0;
-
+        public static final double SHOOTER_PIVOT_ZERO_ANGLE = 0; // 65.0;
 
         //////////////////////// DRIVERS ////////////////////////
 
@@ -223,25 +246,5 @@ public class HighAltitudeConstants {
         public static final double SWERVE_MPS_STEP = 0;
 
         public static final double SWERVE_DIRECTION_ON_TARGET = 0;
-
-
-        ///     PROFILED PID CONTROLLER         ///
-
-        //      CONSTRAINTS     //
-        public static final double SWERVE_DIRECTION_MAX_VELOCITY = 0;
-        public static final double SWERVE_DIRECTION_MAX_ACCELERATION = 0;
-
-        //      FEEDBACK     //
-        public static final double SWERVE_DIRECTION_kP = 0;
-        public static final double SWERVE_DIRECTION_kI = 0;
-        public static final double SWERVE_DIRECTION_kD = 0;
-
-        //      FEEDFORWARD     //
-        public static final double SWERVE_DIRECTION_kS = 0;
-        public static final double SWERVE_DIRECTION_kV = 0;
-        public static final double SWERVE_DIRECTION_kA = 0;
-
-
-        
 
 }
