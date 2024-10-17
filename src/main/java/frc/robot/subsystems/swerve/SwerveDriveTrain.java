@@ -11,6 +11,9 @@ import frc.robot.resources.math.Math;
 import frc.robot.subsystems.vision.vision;
 
 import java.util.ArrayList;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindHolonomic;
@@ -300,16 +303,12 @@ public class SwerveDriveTrain extends SubsystemBase {
   }
 
   public void updateOdometryWithVision() {
-    // EstimatedRobotPose pose =
-    // Robot.getRobotContainer().getVision().getEstimatedPosition();
-
-    var pos = Robot.getRobotContainer().getVision().getEstimatedGlobalPose(getPose());
-
-    if (pos == null || pos.isEmpty())
-      return;
-    var pose = pos.get();
-    swerveDrivePoseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-        pose.timestampSeconds);
+    for (Optional<EstimatedRobotPose> pos : Robot.getRobotContainer().getVision().getEstimatedGlobalPose(getPose())) {
+      if (pos == null || pos.isEmpty())
+        continue;
+      var pose = pos.get();
+      swerveDrivePoseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+    }
   }
 
   public void addVisionMeasurement(Pose2d visionMeasurement, double timeStampSeconds) {

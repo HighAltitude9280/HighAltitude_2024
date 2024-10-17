@@ -8,6 +8,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,8 +29,10 @@ public class vision extends SubsystemBase {
   PhotonCamera tagsCameraCorner, tagsCameraShooter, noteCamera;
   PhotonPipelineResult resultCorner, resultShooter, resultNoteCam;
 
-  PhotonPoseEstimator poseEstimator1, poseEstimator2;
-  Optional<EstimatedRobotPose> estimatedPose;
+  PhotonPoseEstimator poseEstimatorCorner, poseEstimatorShooter;
+  private ArrayList<Optional<EstimatedRobotPose>> estimatedPoseCorner, estimatedPoseShooter;
+  private Optional<EstimatedRobotPose> pose1 = poseEstimatorShooter.update();
+  private Optional<EstimatedRobotPose> pose2 = poseEstimatorCorner.update();
 
   /** Creates a new vision. */
   public vision() {
@@ -37,18 +40,28 @@ public class vision extends SubsystemBase {
     tagsCameraShooter = new PhotonCamera("ArducamShooter");
     noteCamera = new PhotonCamera("RazerCamNote");
 
-    AprilTagFieldLayout fieldLayout;
+    estimatedPoseCorner = new ArrayList<>();
+    estimatedPoseShooter = new ArrayList<>();
 
+    AprilTagFieldLayout fieldLayout;
     try {
-      Transform3d cam = new Transform3d(new Translation3d(-0.32, -0.20, 0.58),
-          new Rotation3d(0f, Math.toRadians(-10), Math.toRadians(190)));
+      // Translation 3d use this doc to know the position on your robot.
+      // https://docs.wpilib.org/es/stable/docs/software/basic-programming/coordinate-system.html
       fieldLayout = new AprilTagFieldLayout(
           "/home/lvuser/deploy/vision/CustomAprilTagFieldLayout.json");
-      poseEstimator1 = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-          tagsCameraCorner, cam);
-      poseEstimator2 = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-          tagsCameraShooter, cam);
+
+      Transform3d camCorner = new Transform3d(new Translation3d(0, 0, 0),
+          new Rotation3d(0f, Math.toRadians(-10), Math.toRadians(190)));
+
+      poseEstimatorCorner = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+          tagsCameraCorner, camCorner);
+      Transform3d camShooter = new Transform3d(new Translation3d(0, 0, 0),
+          new Rotation3d(0f, Math.toRadians(-10), Math.toRadians(190)));
+      poseEstimatorShooter = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+          tagsCameraShooter, camShooter);
+
     } catch (IOException e) {
+
       e.printStackTrace();
     }
     resultNoteCam = noteCamera.getLatestResult();
@@ -94,21 +107,27 @@ public class vision extends SubsystemBase {
 
   }
 
-  public Optional<EstimatedRobotPose> getEstimatedPosition() {
-
-    return estimatedPose;
-
+  public ArrayList<Optional<EstimatedRobotPose>> getEstimatedPosition() {
+    ArrayList<Optional<EstimatedRobotPose>> result = new ArrayList<>();
+    result.add(pose1);
+    result.add(pose2);
+    return result;
   }
 
-  public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-
-    poseEstimator1.setReferencePose(prevEstimatedRobotPose);
-    poseEstimator2.setReferencePose(prevEstimatedRobotPose);
-    return estimatedPose;
+  public ArrayList<Optional<EstimatedRobotPose>> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
+    poseEstimatorShooter.setReferencePose(prevEstimatedRobotPose);
+    ArrayList<Optional<EstimatedRobotPose>> result = new ArrayList<>();
+    result.add(pose1);
+    result.add(pose2);
+    return result;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    pose1 = poseEstimatorShooter.update();
+    pose2 = poseEstimatorCorner.update();
+    getEstimatedPosition();
+    getEstimatedGlobalPose(null);
   }
 }
