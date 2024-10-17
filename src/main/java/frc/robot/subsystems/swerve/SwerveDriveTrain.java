@@ -243,30 +243,27 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   }
 
-  
-   public void followTarget(double yaw, double area, double area_target, double
-   maxPower) {
-   
-   vision vision = Robot.getRobotContainer().getVision();
-   
-   double xPower = (HighAltitudeConstants.YAW_OFFSET - vision.getYaw()) *
-   HighAltitudeConstants.YAW_CORRECTION;
-   double yPower = (area_target -
-   Robot.getRobotContainer().getVision().getArea()) *
-   HighAltitudeConstants.DISTANCE_CORRECTION;
-   
-   xPower = Math.clamp(xPower * maxPower, -maxPower, maxPower);
-   yPower = Math.clamp(yPower * maxPower, -maxPower, maxPower);
-   
-   SmartDashboard.putNumber("deltaX", HighAltitudeConstants.YAW_OFFSET -
-   vision.getYaw());
-   SmartDashboard.putNumber("deltaY", (area_target -
-   Robot.getRobotContainer().getVision().getArea()));
-   SmartDashboard.putNumber("Yawwwww", vision.getYaw());
-   defaultDrive(-yPower, -xPower, 0);
-   
-   }
-   
+  public void followTarget(double yaw, double area, double area_target, double maxPower) {
+
+    vision vision = Robot.getRobotContainer().getVision();
+
+    double xPower = (HighAltitudeConstants.YAW_OFFSET - vision.getYaw()) *
+        HighAltitudeConstants.YAW_CORRECTION;
+    double yPower = (area_target -
+        Robot.getRobotContainer().getVision().getArea()) *
+        HighAltitudeConstants.DISTANCE_CORRECTION;
+
+    xPower = Math.clamp(xPower * maxPower, -maxPower, maxPower);
+    yPower = Math.clamp(yPower * maxPower, -maxPower, maxPower);
+
+    SmartDashboard.putNumber("deltaX", HighAltitudeConstants.YAW_OFFSET -
+        vision.getYaw());
+    SmartDashboard.putNumber("deltaY", (area_target -
+        Robot.getRobotContainer().getVision().getArea()));
+    SmartDashboard.putNumber("Yawwwww", vision.getYaw());
+    defaultDrive(-yPower, -xPower, 0);
+
+  }
 
   public void setModuleStates(SwerveModuleState[] states) {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, HighAltitudeConstants.SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND);
@@ -289,28 +286,36 @@ public class SwerveDriveTrain extends SubsystemBase {
     backLeft.setState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     backRight.setState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
+  // Odometry
 
-  
-   public void updateOdometryWithVision() {
-   // EstimatedRobotPose pose =
-   // Robot.getRobotContainer().getVision().getEstimatedPosition();
-   
-   var pos =
-   Robot.getRobotContainer().getVision().getEstimatedGlobalPose(getPose());
-   
-   if (pos == null || pos.isEmpty())
-   return;
-   var pose = pos.get();
-   swerveDrivePoseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-   pose.timestampSeconds);
-   }
-   
-   public void addVisionMeasurement(Pose2d visionMeasurement, double
-   timeStampSeconds) {
-   swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement,
-   timeStampSeconds);
-   }
-  
+  public void updateOdometry() {
+    swerveDrivePoseEstimator.update(
+        getRotation2dCCWPositive(),
+        new SwerveModulePosition[] {
+            frontLeft.getPosition(),
+            frontRight.getPosition(),
+            backLeft.getPosition(),
+            backRight.getPosition() });
+    field.setRobotPose(getPose());
+  }
+
+  public void updateOdometryWithVision() {
+    // EstimatedRobotPose pose =
+    // Robot.getRobotContainer().getVision().getEstimatedPosition();
+
+    var pos = Robot.getRobotContainer().getVision().getEstimatedGlobalPose(getPose());
+
+    if (pos == null || pos.isEmpty())
+      return;
+    var pose = pos.get();
+    swerveDrivePoseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+        pose.timestampSeconds);
+  }
+
+  public void addVisionMeasurement(Pose2d visionMeasurement, double timeStampSeconds) {
+    swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement,
+        timeStampSeconds);
+  }
 
   public Pose2d getPose() {
     return swerveDrivePoseEstimator.getEstimatedPosition();
@@ -367,22 +372,21 @@ public class SwerveDriveTrain extends SubsystemBase {
     }
   }
 
-  /*
-   * public Command pathfindToPose(Pose2d targetPose) {
-   * PathConstraints constraints = new PathConstraints(
-   * HighAltitudeConstants.PATHFINDING_MAX_LINEAR_SPEED,
-   * HighAltitudeConstants.PATHFINDING_MAX_LINEAR_ACCELERATION,
-   * HighAltitudeConstants.PATHFINDING_MAX_ANGULAR_SPEED,
-   * HighAltitudeConstants.PATHFINDING_MAX_ANGULAR_ANGULAR_ACCELERATION);
-   * 
-   * Subsystem swerve = this;
-   * Command pathCommand = new PathfindHolonomic(targetPose, constraints,
-   * this::getPose, this::getChassisSpeeds,
-   * this::driveRobotRelative, HighAltitudeConstants.pathFollowerConfig, swerve);
-   * 
-   * return pathCommand;
-   * }
-   */
+  public Command pathfindToPose(Pose2d targetPose) {
+    PathConstraints constraints = new PathConstraints(
+        HighAltitudeConstants.PATHFINDING_MAX_LINEAR_SPEED,
+        HighAltitudeConstants.PATHFINDING_MAX_LINEAR_ACCELERATION,
+        HighAltitudeConstants.PATHFINDING_MAX_ANGULAR_SPEED,
+        HighAltitudeConstants.PATHFINDING_MAX_ANGULAR_ANGULAR_ACCELERATION);
+
+    Subsystem swerve = this;
+    Command pathCommand = new PathfindHolonomic(targetPose, constraints,
+        this::getPose, this::getChassisSpeeds,
+        this::driveSpeed, HighAltitudeConstants.pathFollowerConfig, swerve);
+    // antes this::driveRobotRelative
+
+    return pathCommand;
+  }
 
   public ChassisSpeeds getChassisSpeeds() {
     return HighAltitudeConstants.SWERVE_KINEMATICS.toChassisSpeeds(
@@ -451,8 +455,8 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // updateOdometry();
-    // updateOdometryWithVision();
+    updateOdometry();
+    updateOdometryWithVision();
     putAllInfoInSmartDashboard();
   }
 
@@ -462,7 +466,7 @@ public class SwerveDriveTrain extends SubsystemBase {
     frontRight.putProcessedValues("FR");
     backRight.putProcessedValues("BR");
     backLeft.putProcessedValues("BL");
-    
+
     /*
      * frontLeft.putEncoderValuesInvertedApplied("FL");
      * frontRight.putEncoderValuesInvertedApplied("FR");

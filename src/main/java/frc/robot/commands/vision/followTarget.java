@@ -17,7 +17,7 @@ public class followTarget extends Command {
   public followTarget() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Robot.getRobotContainer().getSwerveDriveTrain());
-    //addRequirements(Robot.getRobotContainer().getShooterPivot());
+    // addRequirements(Robot.getRobotContainer().getShooterPivot());
   }
 
   // Called when the command is initially scheduled.
@@ -35,7 +35,7 @@ public class followTarget extends Command {
       double area = vision.getArea();
       // Robot.getRobotContainer().getSwerveDriveTrain().followTarget(yaw, area, 1.53,
       // 0.2);
-     // Robot.getRobotContainer().getShooterPivot().followTarget();
+      // Robot.getRobotContainer().getShooterPivot().followTarget();
     }
   }
 
