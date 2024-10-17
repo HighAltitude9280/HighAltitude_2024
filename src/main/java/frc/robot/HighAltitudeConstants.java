@@ -24,19 +24,20 @@ public class HighAltitudeConstants {
         ////////////////////////// SWERVE //////////////////////////
 
         public static final double MAX_VOLTAGE = 12.5;
+        // ponlo a 3 para pruebas
 
         /// CONSTANTS FOR MK4i L4 Config DRIVE MOTOR ///
         // In meters
         public static final double SWERVE_WHEEL_DIAMETER = 4 * 0.0254;
         // NEVER, ABSOLUTELY NEVER APPROXIMATE THIS, USE ONLY FRACTIONS WITH WHOLE
-        // NUMBERS. (Driven / Driver)                                                //pinion
+        // NUMBERS. (Driven / Driver) //pinion
         public static final double SWERVE_DRIVE_GEAR_RATIO = (50.0 * 16.0 * 45.0) / (16.0 * 28.0 * 15.0);
         // ft/s //ft -> in //im -> m
         public static final double SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND = 20.4 * 12 * 0.0254;
 
         /////////// KINEMATICS
         // Distance left - right (meters)
-        public static final double SWERVE_TRACK_WIDTH = 26 * 0.0254; //este es de llanta a llanta
+        public static final double SWERVE_TRACK_WIDTH = 26 * 0.0254; // este es de llanta a llanta
         // Distance front - back (meters)
         public static final double SWERVE_WHEEL_BASE = 23 * 0.0254;
 
