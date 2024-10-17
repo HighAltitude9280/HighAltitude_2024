@@ -8,6 +8,7 @@ import frc.robot.HighAltitudeConstants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.resources.math.Math;
+import frc.robot.subsystems.vision.vision;
 
 import java.util.ArrayList;
 
@@ -242,30 +243,30 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   }
 
-  /*
-   * public void followTarget(double yaw, double area, double area_target, double
-   * maxPower) {
-   * 
-   * Vision vision = Robot.getRobotContainer().getVision();
-   * 
-   * double xPower = (HighAltitudeConstants.YAW_OFFSET - vision.getYaw()) *
-   * HighAltitudeConstants.YAW_CORRECTION;
-   * double yPower = (area_target -
-   * Robot.getRobotContainer().getVision().getArea())
-   * HighAltitudeConstants.DISTANCE_CORRECTION;
-   * 
-   * xPower = Math.clamp(xPower * maxPower, -maxPower, maxPower);
-   * yPower = Math.clamp(yPower * maxPower, -maxPower, maxPower);
-   * 
-   * SmartDashboard.putNumber("deltaX", HighAltitudeConstants.YAW_OFFSET -
-   * vision.getYaw());
-   * SmartDashboard.putNumber("deltaY", (area_target -
-   * Robot.getRobotContainer().getVision().getArea()));
-   * SmartDashboard.putNumber("Yawwwww", vision.getYaw());
-   * defaultDrive(-yPower, -xPower, 0);
-   * 
-   * }
-   */
+  
+   public void followTarget(double yaw, double area, double area_target, double
+   maxPower) {
+   
+   vision vision = Robot.getRobotContainer().getVision();
+   
+   double xPower = (HighAltitudeConstants.YAW_OFFSET - vision.getYaw()) *
+   HighAltitudeConstants.YAW_CORRECTION;
+   double yPower = (area_target -
+   Robot.getRobotContainer().getVision().getArea()) *
+   HighAltitudeConstants.DISTANCE_CORRECTION;
+   
+   xPower = Math.clamp(xPower * maxPower, -maxPower, maxPower);
+   yPower = Math.clamp(yPower * maxPower, -maxPower, maxPower);
+   
+   SmartDashboard.putNumber("deltaX", HighAltitudeConstants.YAW_OFFSET -
+   vision.getYaw());
+   SmartDashboard.putNumber("deltaY", (area_target -
+   Robot.getRobotContainer().getVision().getArea()));
+   SmartDashboard.putNumber("Yawwwww", vision.getYaw());
+   defaultDrive(-yPower, -xPower, 0);
+   
+   }
+   
 
   public void setModuleStates(SwerveModuleState[] states) {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, HighAltitudeConstants.SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND);
@@ -289,27 +290,27 @@ public class SwerveDriveTrain extends SubsystemBase {
     backRight.setState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
-  /*
-   * public void updateOdometryWithVision() {
-   * // EstimatedRobotPose pose =
-   * // Robot.getRobotContainer().getVision().getEstimatedPosition();
-   * 
-   * var pos =
-   * Robot.getRobotContainer().getVision().getEstimatedGlobalPose(getPose());
-   * 
-   * if (pos == null || pos.isEmpty())
-   * return;
-   * var pose = pos.get();
-   * swerveDrivePoseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-   * pose.timestampSeconds);
-   * }
-   * 
-   * public void addVisionMeasurement(Pose2d visionMeasurement, double
-   * timeStampSeconds) {
-   * swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement,
-   * timeStampSeconds);
-   * }
-   */
+  
+   public void updateOdometryWithVision() {
+   // EstimatedRobotPose pose =
+   // Robot.getRobotContainer().getVision().getEstimatedPosition();
+   
+   var pos =
+   Robot.getRobotContainer().getVision().getEstimatedGlobalPose(getPose());
+   
+   if (pos == null || pos.isEmpty())
+   return;
+   var pose = pos.get();
+   swerveDrivePoseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+   pose.timestampSeconds);
+   }
+   
+   public void addVisionMeasurement(Pose2d visionMeasurement, double
+   timeStampSeconds) {
+   swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement,
+   timeStampSeconds);
+   }
+  
 
   public Pose2d getPose() {
     return swerveDrivePoseEstimator.getEstimatedPosition();
