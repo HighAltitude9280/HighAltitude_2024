@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.swerve.DefaultSwerveDriveNew;
+import frc.robot.commands.swerve.TestSwerve;
 import frc.robot.resources.components.Navx;
 import frc.robot.resources.components.PWMLEDStrip.LEDs;
 import frc.robot.resources.components.PWMLEDStrip.commands.primitives.SetRGB;
@@ -42,10 +43,9 @@ public class RobotContainer {
     private SwerveDriveTrain swerveDriveTrain;
     private LEDs leds;
     private Indexer indexer;
-    //private DriverCameras driverCameras;
+    // private DriverCameras driverCameras;
     private boolean isOnField;
     private vision vision;
-
 
     SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -131,8 +131,17 @@ public class RobotContainer {
     public Shooter getShooter() {
         return shooter;
     }
-    
-    public Indexer getIndexer(){
+
+    public Indexer getIndexer() {
         return indexer;
+    }
+
+    public ShooterPivot getShooterPivot() {
+        return shooterPivot;
+    }
+
+    public void generateAutos() {
+        //NamedCommands.registerCommand("ShootPreloaded", new TestSwerve(1));
+        //m_chooser.setDefaultOption("Nothing", new WaitCommand(0));
     }
 }

@@ -8,7 +8,6 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,7 +15,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import frc.robot.Human_Drivers.HumanDrivers;
-import frc.robot.subsystems.swerve.HASwerveModule;
 
 /** Add your docs here. */
 public class HighAltitudeConstants {
@@ -239,7 +237,15 @@ public class HighAltitudeConstants {
         public static final double SHOOTER_RIGHT_kS = 0.0;
         public static final double SHOOTER_RIGHT_kV = 0.0001835;
 
+        ////////////////////////// INDEXER //////////////////////////
+
+        public static final double INDEXER_IN_SPEED = 0.7;
+        public static final double INDEXER_OUT_SPEED = -0.7;
+
         ////////////////////////// INTAKE //////////////////////////
+
+        public static final double INTAKE_IN_SPEED = 0.6;
+        public static final double INTAKE_OUT_SPEED = -0.6;
 
         public static final boolean INTAKE_MOTOR_BRAKING_MODE = false;
 

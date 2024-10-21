@@ -5,9 +5,6 @@
 package frc.robot.commands.swerve;
 
 import java.util.ArrayList;
-
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.HASwerveModule;

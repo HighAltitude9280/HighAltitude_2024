@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.manipulator.Intake;
 
-public class IntakeIn extends Command {
+public class IntakeOut extends Command {
   Intake intake;
 
   /** Creates a new IntakeIn. */
-  public IntakeIn() {
+  public IntakeOut() {
     intake = Robot.getRobotContainer().getIntake();
 
     addRequirements(intake);
@@ -27,7 +27,7 @@ public class IntakeIn extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.intakeIn();
+    intake.intakeOut();
   }
 
   // Called once the command ends or is interrupted.

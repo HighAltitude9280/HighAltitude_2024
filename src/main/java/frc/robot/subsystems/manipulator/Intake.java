@@ -5,6 +5,7 @@
 package frc.robot.subsystems.manipulator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.HighAltitudeConstants;
 import frc.robot.RobotMap;
 
 import com.revrobotics.ColorSensorV3;
@@ -35,11 +36,11 @@ public class Intake extends SubsystemBase {
   }
 
   public void intakeIn() {
-    intakeMotors.setAll(0.6);
+    intakeMotors.setAll(HighAltitudeConstants.INTAKE_IN_SPEED);
   }
 
   public void intakeOut() {
-    intakeMotors.setAll(-0.6);
+    intakeMotors.setAll(HighAltitudeConstants.INTAKE_OUT_SPEED);
   }
 
 

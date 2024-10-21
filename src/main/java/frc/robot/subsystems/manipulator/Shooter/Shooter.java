@@ -18,6 +18,7 @@ import frc.robot.resources.math.Math;
 public class Shooter extends SubsystemBase {
   HighAltitudeMotorGroup shooterLeftMotors;
   HighAltitudeMotorGroup shooterRightMotors;
+
   private boolean rpmOnTarget = false;
 
   private AnalogInput proximitySensor;
@@ -118,11 +119,6 @@ public class Shooter extends SubsystemBase {
   public void shootToSpeakerAutoIndexer() {
     if (driveRPMToSpeaker())
       Robot.getRobotContainer().getIndexer().indexerOut();
-  }
-
-  public void setRPMPower(double power) {
-    currentRPMPowerLeft = power;
-    currentRPMPowerRight = power;
   }
 
   public boolean hasNote() {

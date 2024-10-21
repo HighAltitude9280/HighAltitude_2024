@@ -5,6 +5,7 @@
 package frc.robot.subsystems.manipulator.Shooter;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.HighAltitudeConstants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.resources.components.speedController.HighAltitudeMotorGroup;
@@ -19,12 +20,12 @@ public class Indexer extends SubsystemBase {
         RobotMap.SHOOTER_INDEXER_MOTOR_TYPES);
   }
 
-  public void driveIndexer(double speed) {
-    indexerMotors.setAll(speed);
+  public void indexerIn() {
+    indexerMotors.setAll(HighAltitudeConstants.INDEXER_IN_SPEED);
   }
 
   public void indexerOut() {
-    indexerMotors.setAll(0.7);
+    indexerMotors.setAll(HighAltitudeConstants.INDEXER_OUT_SPEED);
   }
 
   // Drives the rollers out if the shooter is on its RPM target.
@@ -33,7 +34,7 @@ public class Indexer extends SubsystemBase {
       indexerOut();
   }
 
-  public void stopRollers() {
+  public void stopIndexer() {
     indexerMotors.setAll(0);
   }
 

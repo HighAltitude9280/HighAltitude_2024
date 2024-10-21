@@ -2,20 +2,20 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.manipulator.intake;
+package frc.robot.commands.manipulator.indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.manipulator.Intake;
+import frc.robot.subsystems.manipulator.Shooter.Indexer;
 
-public class IntakeIn extends Command {
-  Intake intake;
+public class IndexerIn extends Command {
+  Indexer indexer;
 
-  /** Creates a new IntakeIn. */
-  public IntakeIn() {
-    intake = Robot.getRobotContainer().getIntake();
+  /** Creates a new IndexerIn. */
+  public IndexerIn() {
+    indexer = Robot.getRobotContainer().getIndexer();
 
-    addRequirements(intake);
+    addRequirements(indexer);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -27,13 +27,13 @@ public class IntakeIn extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.intakeIn();
+    indexer.indexerIn();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.stopIntake();
+    indexer.stopIndexer();
   }
 
   // Returns true when the command should end.
