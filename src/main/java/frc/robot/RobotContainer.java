@@ -17,6 +17,10 @@ import frc.robot.commands.swerve.DefaultSwerveDriveNew;
 import frc.robot.resources.components.Navx;
 import frc.robot.resources.components.PWMLEDStrip.LEDs;
 import frc.robot.resources.components.PWMLEDStrip.commands.primitives.SetRGB;
+import frc.robot.subsystems.manipulator.Intake;
+import frc.robot.subsystems.manipulator.ShooterPivot;
+import frc.robot.subsystems.manipulator.Shooter.Indexer;
+import frc.robot.subsystems.manipulator.Shooter.Shooter;
 //import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
 import frc.robot.subsystems.vision.vision;
@@ -32,10 +36,16 @@ public class RobotContainer {
 
     private Mode currentMode = Mode.MANUAL;
     private Navx navx;
+    private Intake intake;
+    private Shooter shooter;
+    private ShooterPivot shooterPivot;
     private SwerveDriveTrain swerveDriveTrain;
-    private vision vision;
     private LEDs leds;
+    private Indexer indexer;
+    //private DriverCameras driverCameras;
     private boolean isOnField;
+    private vision vision;
+
 
     SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -44,6 +54,11 @@ public class RobotContainer {
         leds = new LEDs();
         swerveDriveTrain = new SwerveDriveTrain();
         vision = new vision();
+        intake = new Intake();
+        shooter = new Shooter();
+        indexer = new Indexer();
+        shooterPivot = new ShooterPivot();
+
     }
 
     public void ConfigureButtonBindings() {
@@ -109,4 +124,15 @@ public class RobotContainer {
         return vision;
     }
 
+    public Intake getIntake() {
+        return intake;
+    }
+
+    public Shooter getShooter() {
+        return shooter;
+    }
+    
+    public Indexer getIndexer(){
+        return indexer;
+    }
 }

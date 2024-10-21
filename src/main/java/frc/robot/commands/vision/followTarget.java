@@ -33,9 +33,9 @@ public class followTarget extends Command {
     if (vision.hasNoteTargets()) {
       double yaw = vision.getYaw();
       double area = vision.getArea();
-      // Robot.getRobotContainer().getSwerveDriveTrain().followTarget(yaw, area, 1.53,
-      // 0.2);
-      // Robot.getRobotContainer().getShooterPivot().followTarget();
+      Robot.getRobotContainer().getSwerveDriveTrain().followTarget(yaw, area, 1.53,
+          0.2);
+      //Robot.getRobotContainer().getShooterPivot().followTarget();
     }
   }
 

@@ -87,12 +87,12 @@ public class RobotMap {
     public static final int[] SHOOTER_RIGHT_MOTOR_PORTS = { 31 };
     public static final int[] SHOOTER_RIGHT_INVERTED_MOTORS_PORTS = {};
     public static final boolean SHOOTER_RIGHT_ENCODER_IS_INVERTED = false;
-    public static final TypeOfMotor[] SHOOTER_DOWN_MOTOR_TYPES = { TypeOfMotor.CAN_SPARK_BRUSHLESS };
+    public static final TypeOfMotor[] SHOOTER_RIGHT_MOTOR_TYPES = { TypeOfMotor.CAN_SPARK_BRUSHLESS };
 
     public static final int[] SHOOTER_INDEXER_MOTOR_PORTS = { 32 };
     public static final int[] SHOOTER_INDEXER_INVERTED_MOTORS_PORTS = {};
     public static final boolean SHOOTER_INDEXER_ENCODER_IS_INVERTED = false;
-    public static final TypeOfMotor[] SHOOTER_INDEXER_MOTOR_TYPES = { TypeOfMotor.CAN_SPARK_BRUSHLESS };
+    public static final TypeOfMotor[] SHOOTER_INDEXER_MOTOR_TYPES = { TypeOfMotor.TALON_SRX };
 
     public static final double SHOOTER_HEIGHT = 0;
     public static final int SHOOTER_PROXIMITY_SENSOR_PORT = 1;
@@ -103,6 +103,7 @@ public class RobotMap {
     public static final int[] INTAKE_INVERTED_MOTORS_PORTS = { 20 };
     public static final boolean INTAKE_ENCODER_IS_INVERTED = false;
     public static final TypeOfMotor[] INTAKE_MOTOR_TYPES = { TypeOfMotor.CAN_SPARK_BRUSHLESS };
+    public static final int INTAKE_ANALOG_SENSOR_PORT = 0;
 
     ////////////////////////// PIVOTS //////////////////////////
 
