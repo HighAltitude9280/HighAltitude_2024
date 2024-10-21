@@ -11,9 +11,9 @@ import frc.robot.commands.manipulator.intake.IntakeIn;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakeIndex extends ParallelCommandGroup {
+public class IntakeIndexerIn extends ParallelCommandGroup {
   /** Creates a new IntakeIndex. */
-  public IntakeIndex() {
+  public IntakeIndexerIn() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(

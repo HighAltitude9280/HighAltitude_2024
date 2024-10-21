@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import frc.robot.commands.manipulator.intake.IntakeIn;
+import frc.robot.commands.manipulator.intake.IntakeOut;
+import frc.robot.commands.manipulator.pivot.ShooterPivotMaintainTarget;
+import frc.robot.commands.manipulator.pivot.ShooterPivotSetAngleTarget;
+import frc.robot.commands.manipulator.shooter.ControlShooter;
+import frc.robot.commands.manipulator.transition.IntakeIndexerIn;
 import frc.robot.commands.swerve.DefaultSwerveDriveNew;
 import frc.robot.commands.swerve.TestSwerve;
 import frc.robot.commands.swerve.swerveParameters.ResetOdometryZeros;
@@ -39,10 +45,18 @@ public class OI {
                 pilot.onTrueCombo(new ResetOdometryZeros(), ButtonType.START, ButtonType.BACK);
                 pilot.onTrue(ButtonType.X, new DefaultSwerveDriveNew());
 
-                pilot.onTrue(ButtonType.RT, new TestSwerve(0.5));
-                pilot.onTrue(ButtonType.LT, new TestSwerve(-0.5));
+                pilot.whileTrue(ButtonType.POV_N, new TestSwerve(0.5));
+                pilot.whileTrue(ButtonType.POV_S, new TestSwerve(-0.5));
 
-                
+                pilot.whileTrue(ButtonType.LT, new IntakeIn());
+                pilot.whileTrue(ButtonType.LB, new IntakeOut());
+
+                pilot.onTrue(ButtonType.LT, new ShooterPivotSetAngleTarget(0));
+                pilot.whileTrue(ButtonType.LT, new ShooterPivotMaintainTarget(0.1));
+
+                pilot.whileTrue(ButtonType.RT, new ControlShooter(2000));
+                pilot.whileTrue(ButtonType.RB, new IntakeIndexerIn());
+
                 /*
                  * pilot.whileTrue(ButtonType.X, new DriveIntake(-0.1));
                  * 
