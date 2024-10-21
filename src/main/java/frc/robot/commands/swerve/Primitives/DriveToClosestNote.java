@@ -51,7 +51,6 @@ public class DriveToClosestNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   //return Robot.getRobotContainer().getIntake().hasNote();
-  return false;
+   return Robot.getRobotContainer().getIntake().hasNote();
   }
 }

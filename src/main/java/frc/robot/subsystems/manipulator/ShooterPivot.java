@@ -99,7 +99,6 @@ public class ShooterPivot extends SubsystemBase {
   public void setAngleTarget(double targetDegrees) {
 
     this.encoderTarget = angleToEncoder(targetDegrees);
-
   }
 
   public double angleToEncoder(double angleDegrees) {
