@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Human_Drivers.HumanDrivers;
 import frc.robot.commands.swerve.DefaultSwerveDriveNew;
 import frc.robot.commands.swerve.TestSwerve;
 import frc.robot.resources.components.Navx;
@@ -140,8 +141,16 @@ public class RobotContainer {
         return shooterPivot;
     }
 
+    public HumanDrivers getCurrentPilot() {
+        return HighAltitudeConstants.CURRENT_PILOT;
+    }
+
+    public HumanDrivers getCurrentCopilot() {
+        return HighAltitudeConstants.CURRENT_COPILOT;
+    }
+
     public void generateAutos() {
-        //NamedCommands.registerCommand("ShootPreloaded", new TestSwerve(1));
-        //m_chooser.setDefaultOption("Nothing", new WaitCommand(0));
+        // NamedCommands.registerCommand("ShootPreloaded", new TestSwerve(1));
+        // m_chooser.setDefaultOption("Nothing", new WaitCommand(0));
     }
 }

@@ -110,8 +110,6 @@ public class HighAltitudeConstants {
         public static final double SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS = (SWERVE_DRIVE_METERS_PER_PULSE)
                         / 60;
 
-        public static final double SWERVE_DRIVE_FEEDFORWARD_GAIN = 0;
-
         public static final double SWERVE_DRIVE_CLEANUP_MODE_SPEED_METERS_PER_SECOND = SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND
                         * 0.8;
 
@@ -187,7 +185,7 @@ public class HighAltitudeConstants {
         // FEEDFORWARD //
         public static final double SWERVE_DIRECTION_kS = 0;
         public static final double SWERVE_DIRECTION_kV = 0;
-        public static final double SWERVE_DIRECTION_kA = 0;
+        public static final double SWERVE_DIRECTION_kA = 0; // no sé si dejarlo en 0
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
                         new PIDConstants(0.9, 0, 0.000025), // Translation constants
@@ -200,8 +198,8 @@ public class HighAltitudeConstants {
 
         //// SpeedReduction constants
 
-        public static final double SWERVE_TURN_BRAKE_DISTANCE = 0; // 32.0;
-        public static final double SWERVE_TURN_ARRIVE_OFFSET = 0; // 3.0;
+        public static final double SWERVE_TURN_BRAKE_DISTANCE = 32; // 32.0;
+        public static final double SWERVE_TURN_ARRIVE_OFFSET = 3; // 3.0;
 
         //// VISION
 
@@ -223,14 +221,16 @@ public class HighAltitudeConstants {
         public static final double SHOOTER_RPM_STEP = 0.000004;
         public static final double SHOOTER_ON_TARGET = 50;
 
-        // Order of tuning: feed forward, then PID
+                // LEFT //
 
+        // Order of tuning: feed forward, then PID
         public static final double SHOOTER_LEFT_kP = 0.00005;
         public static final double SHOOTER_LEFT_kD = 0.000011;
 
         public static final double SHOOTER_LEFT_kS = 0.0;
         public static final double SHOOTER_LEFT_kV = 0.000177;
 
+                // RIGHT //
         public static final double SHOOTER_RIGHT_kP = 0.000027;
         public static final double SHOOTER_RIGHT_kD = 0.000011;
 
@@ -298,7 +298,5 @@ public class HighAltitudeConstants {
         public static final Pose2d AMP_POS = new Pose2d(new Translation2d(3., 4.31), new Rotation2d(-Math.PI / 2));
 
         public static final double SWERVE_DRIVE_ON_TARGET = 0;
-        public static final double SWERVE_MPS_STEP = 0;
-        public static final double SWERVE_DIRECTION_ON_TARGET = 0;
 
 }

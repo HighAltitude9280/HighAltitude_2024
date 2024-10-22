@@ -30,17 +30,29 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     robotContainer = new RobotContainer();
-     }
+    getRobotContainer().ConfigureButtonBindings();
+    getRobotContainer().getShooterPivot().resetCanCoder();
+    getRobotContainer().getShooterPivot().resetZeroValue();
+    getRobotContainer().generateAutos();
+  }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    SmartDashboard.putString("Pilot",
+        robotContainer.getCurrentPilot().toString());
+    SmartDashboard.putString("Copilot",
+        robotContainer.getCurrentCopilot().toString());
 
-      }
+    SmartDashboard.putBoolean("Field Oriented",
+        robotContainer.getSwerveDriveTrain().getIsFieldOriented());
+  }
 
   @Override
   public void autonomousInit() {
-   
+    getRobotContainer().getSwerveDriveTrain().setModulesBrakeMode(true);
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -55,6 +67,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    getRobotContainer().getSwerveDriveTrain().setModulesBrakeMode(true);
+
   }
 
   @Override
