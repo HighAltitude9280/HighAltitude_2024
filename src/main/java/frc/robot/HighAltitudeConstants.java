@@ -221,7 +221,7 @@ public class HighAltitudeConstants {
         public static final double SHOOTER_RPM_STEP = 0.000004;
         public static final double SHOOTER_ON_TARGET = 50;
 
-                // LEFT //
+        // LEFT //
 
         // Order of tuning: feed forward, then PID
         public static final double SHOOTER_LEFT_kP = 0.00005;
@@ -230,7 +230,7 @@ public class HighAltitudeConstants {
         public static final double SHOOTER_LEFT_kS = 0.0;
         public static final double SHOOTER_LEFT_kV = 0.000177;
 
-                // RIGHT //
+        // RIGHT //
         public static final double SHOOTER_RIGHT_kP = 0.000027;
         public static final double SHOOTER_RIGHT_kD = 0.000011;
 

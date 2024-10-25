@@ -125,22 +125,6 @@ public class ShooterPivot extends SubsystemBase {
     maintainTarget(maxPower);
   }
 
-  public boolean getShooterPivotTopLimitSwitch() {
-    if (RobotMap.SHOOTER_PIVOT_TOP_LIMIT_SWITCH_IS_AVAILABLE) {
-      return topLimitSwitch.get();
-    } else {
-      return false;
-    }
-  }
-
-  public boolean getShooterPivotBottomLimitSwitch() {
-    if (RobotMap.SHOOTER_PIVOT_BOTTOM_LIMIT_SWITCH_IS_AVAILABLE) {
-      return bottomLimitSwitch.get();
-    } else {
-      return false;
-    }
-  }
-
   public void resetMotorEncoders() {
     shooterPivotMotors.resetEncoder();
   }
@@ -204,9 +188,6 @@ public class ShooterPivot extends SubsystemBase {
     shooterPivotPositionDegrees = getAbsoluteEncoderDeg();
     shooterPivotRawEncoder = absoluteEncoderController.getPosition().getValueAsDouble();
 
-    if (getShooterPivotBottomLimitSwitch())
-      resetCanCoder();
-
     SmartDashboard.putNumber("Shooter Pivot Raw Abs Encoder",
         getShooterPivotRawEncoder());
     SmartDashboard.putNumber("ShooterPivotEncoderTarget", encoderTarget);
@@ -215,10 +196,6 @@ public class ShooterPivot extends SubsystemBase {
 
     SmartDashboard.putBoolean("Shooter_Override", Override);
     SmartDashboard.putNumber("Zero Value shooter pivot", zeroValue);
-    SmartDashboard.putBoolean("Shooter_Pivot_Top_Limit_Switch",
-        getShooterPivotTopLimitSwitch());
-    SmartDashboard.putBoolean("Shooter_Pivot_Bottom_Limit_Switch",
-        getShooterPivotBottomLimitSwitch());
   }
 
 }

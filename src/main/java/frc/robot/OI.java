@@ -6,8 +6,11 @@ package frc.robot;
 
 import frc.robot.commands.manipulator.intake.IntakeIn;
 import frc.robot.commands.manipulator.intake.IntakeOut;
+import frc.robot.commands.manipulator.pivot.ShooterArmMaintainTo;
 import frc.robot.commands.manipulator.pivot.ShooterPivotMaintainTarget;
 import frc.robot.commands.manipulator.pivot.ShooterPivotSetAngleTarget;
+import frc.robot.commands.manipulator.pivot.manual.ShooterPivotDown;
+import frc.robot.commands.manipulator.pivot.manual.ShooterPivotUp;
 import frc.robot.commands.manipulator.shooter.ControlShooter;
 import frc.robot.commands.manipulator.transition.IntakeIndexerIn;
 import frc.robot.commands.swerve.DefaultSwerveDriveNew;
@@ -48,59 +51,18 @@ public class OI {
                 pilot.whileTrue(ButtonType.POV_N, new TestSwerve(0.5));
                 pilot.whileTrue(ButtonType.POV_S, new TestSwerve(-0.5));
 
+                pilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
+                pilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
+
                 pilot.whileTrue(ButtonType.LT, new IntakeIn());
                 pilot.whileTrue(ButtonType.LB, new IntakeOut());
 
-                pilot.onTrue(ButtonType.LT, new ShooterPivotSetAngleTarget(0));
-                pilot.whileTrue(ButtonType.LT, new ShooterPivotMaintainTarget(0.1));
+                // pilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(0, 0.1));
 
                 pilot.whileTrue(ButtonType.RT, new ControlShooter(2000));
                 pilot.whileTrue(ButtonType.RB, new IntakeIndexerIn());
 
-                /*
-                 * pilot.whileTrue(ButtonType.X, new DriveIntake(-0.1));
-                 * 
-                 * pilot.whileTrue(ButtonType.POV_S, new IntakePivotMoveTo(0.5, 0));
-                 * pilot.onTrue(ButtonType.POV_N, new ShooterPivotSetAngleTarget(20));
-                 * pilot.whileTrue(ButtonType.POV_N, new ShooterPivotMaintainTarget(0.5));
-                 * pilot.onTrue(ButtonType.POV_N, new IntakePivotRetractar(0.5));
-                 * 
-                 * pilot.onTrue(ButtonType.POV_S, new ShooterPivotSetAngleTarget(40));
-                 * pilot.whileTrue(ButtonType.POV_S, new ShooterPivotMaintainTarget(0.5));
-                 * pilot.onTrue(ButtonType.POV_S, new IntakePivotExtruir(0.5));
-                 * // ARREGLAR ESTO
-                 * 
-                 * 
-                 * pilot.whileTrue(ButtonType.RB, new IntakeAndRollersOut());
-                 * pilot.whileTrue(ButtonType.LB, new ShooterIntake());
-                 * pilot.whileTrue(ButtonType.LB, new IntakeOut());
-                 * pilot.whileTrue(ButtonType.LB, new RollersInUntilNoNote());
-                 * 
-                 * pilot.whileTrue(ButtonType.RT, new ControlShooter(4000));
-                 * pilot.whileTrue(ButtonType.LT, new IntakeIn());
-                 * 
-                 * // pilot.whileTrue(ButtonType.A, new followTarget());
-                 * 
-                 * pilot.whileTrue(ButtonType.POV_SE, new ToggleIsOnCompetitiveField());
-                 * 
-                 * // pilot.toggleOnTrue(ButtonType.A, new SwerveDriveAndCenter());
-                 * // pilot.onTrue(ButtonType.A, new ShooterPivotSetAngleTarget(22));
-                 * // pilot.whileTrue(ButtonType.A, new ShooterPivotMaintainTarget(0.5));
-                 * pilot.whileTrue(ButtonType.POV_E, new
-                 * ShooterPivotMaintainTargetAndRollers(0.5, 12));
-                 * 
-                 * pilot.whileTrue(ButtonType.POV_W, new
-                 * ShooterPivotMaintainTargetAndRollers(0.5, 35));
-                 * 
-                 * pilot.onTrue(ButtonType.A, new IntakeAutoTransition());
-                 * pilot.whileTrue(ButtonType.A, new DriveToClosestNote(
-                 * HighAltitudeConstants.NOTE_DETECTION_TURN_POWER,
-                 * HighAltitudeConstants.NOTE_DETECTION_DRIVE_POWER));
-                 * 
-                 * pilot.onTrue(ButtonType.B, new AutoAmp());
-                 * pilot.whileTrue(ButtonType.B, new ShooterPivotMaintainTarget(-30, 0.5));
-                 * pilot.whileTrue(ButtonType.B, new IntakeOut());
-                 */
+            default:
                 break;
 
         }
@@ -110,6 +72,19 @@ public class OI {
 
                 copilot = new HighAltitudeJoystick(1, JoystickType.XBOX);
 
+                copilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
+                copilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
+
+                copilot.whileTrue(ButtonType.LT, new IntakeIn());
+                copilot.whileTrue(ButtonType.LB, new IntakeOut());
+
+                // copilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(0, 0.1));
+
+                copilot.whileTrue(ButtonType.RT, new ControlShooter(2000));
+                copilot.whileTrue(ButtonType.RB, new IntakeIndexerIn());
+
+                break;
+            default:
                 break;
         }
 
