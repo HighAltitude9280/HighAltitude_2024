@@ -97,17 +97,16 @@ public class HighAltitudeConstants {
 
         // The reported encoder position after one revolution, check encoder
         // specifications.
-        public static final double SWERVE_DRIVE_PULSES_PER_REVOLUTION = 1.0;
         public static final double SWERVE_DRIVE_VELOCITY_SAMPLE_RATE_MS = 100.0;
 
         // Use this constants to convert from encoder position to meters
         // encoder position * this constant = meters
-        public static final double SWERVE_DRIVE_METERS_PER_PULSE = (Math.PI * SWERVE_WHEEL_DIAMETER)
-                        / (SWERVE_DRIVE_PULSES_PER_REVOLUTION * SWERVE_DRIVE_GEAR_RATIO);
+        public static final double SWERVE_DRIVE_METERS_PER_REVOLUTION = (Math.PI * SWERVE_WHEEL_DIAMETER)
+                        / (SWERVE_DRIVE_GEAR_RATIO);
 
         // Use this constant to convert from motor velocity to meters per second
         // encoder velocity * this constant = meters/second
-        public static final double SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS = (SWERVE_DRIVE_METERS_PER_PULSE)
+        public static final double SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS = (SWERVE_DRIVE_METERS_PER_REVOLUTION)
                         / 60;
 
         public static final double SWERVE_DRIVE_CLEANUP_MODE_SPEED_METERS_PER_SECOND = SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND

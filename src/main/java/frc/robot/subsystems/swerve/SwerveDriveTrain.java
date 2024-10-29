@@ -365,7 +365,7 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   public void setModulesBrakeMode(boolean doBrake) {
     for (HASwerveModule module : modules) {
-      module.getDriveMotor().setBrakeMode(doBrake);
+      module.getDriveMotor();
       module.getDirectionMotor().setBrakeMode(doBrake);
       System.out.println("BrakeMode: " + doBrake);
     }
@@ -466,11 +466,10 @@ public class SwerveDriveTrain extends SubsystemBase {
     backRight.putProcessedValues("BR");
     backLeft.putProcessedValues("BL");
 
-    /*
-     * frontLeft.putEncoderValuesInvertedApplied("FL");
-     * frontRight.putEncoderValuesInvertedApplied("FR");
-     * backLeft.putEncoderValuesInvertedApplied("BL");
-     * backRight.putEncoderValuesInvertedApplied("BR");
-     */
+    frontLeft.putEncoderValuesInvertedApplied("FL");
+    frontRight.putEncoderValuesInvertedApplied("FR");
+    backLeft.putEncoderValuesInvertedApplied("BL");
+    backRight.putEncoderValuesInvertedApplied("BR");
+
   }
 }

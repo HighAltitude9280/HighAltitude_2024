@@ -4,8 +4,12 @@
 
 package frc.robot.subsystems.swerve;
 
+import java.util.Queue;
+
 import javax.swing.LayoutStyle;
 
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -19,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.HighAltitudeConstants;
 import frc.robot.resources.components.speedController.HighAltitudeMotorController;
 import frc.robot.resources.components.speedController.HighAltitudeMotorController.TypeOfMotor;
+import frc.robot.resources.components.speedController.TalonFX.SuperTalonFX;
 import frc.robot.resources.math.Math;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 
@@ -48,8 +53,16 @@ public class HASwerveModule {
     private double currentAngleDirectionPower;
 
     /// DRIVE ///
-    private HighAltitudeMotorController driveMotor;
+    private SuperTalonFX driveMotor;
     private boolean isDriveEncoderReversed;
+
+    private final StatusSignal<Double> drivePosition;
+    private final StatusSignal<Double> driveVelocity;
+    private final StatusSignal<Double> driveAppliedVolts;
+    private final StatusSignal<Double> driveAcceleration;
+    private final StatusSignal<Double> driveCurrent;
+
+    TalonFXConfiguration driveMotorConfiguration = new TalonFXConfiguration();
 
     private PIDController drivePIDController;
     private SimpleMotorFeedforward driveFeedforward;
@@ -67,9 +80,8 @@ public class HASwerveModule {
             boolean isDirectionMotorReversed, boolean isDirectionEncoderReversed,
             int encodedTalonPort, double encoderOffsetPulses, boolean isTalonEncoderReversed) {
 
-        driveMotor = new HighAltitudeMotorController(driveMotorPort, driveTypeOfMotor);
+        driveMotor = new SuperTalonFX(driveMotorPort, isDriveMotorReversed, driveMotorConfiguration);
         driveMotor.setInverted(isDriveMotorReversed);
-        driveMotor.setBrakeMode(true);
         this.isDriveEncoderReversed = isDriveEncoderReversed;
 
         directionMotor = new HighAltitudeMotorController(directionMotorPort, directionTypeOfMotor);
@@ -102,6 +114,14 @@ public class HASwerveModule {
         this.isTalonEncoderReversed = isTalonEncoderReversed;
         this.encoderOffSetPulses = encoderOffsetPulses;
 
+        // DRIVE MOTOR //
+
+        drivePosition = driveMotor.getPosition();
+        driveVelocity = driveMotor.getVelocity();
+        driveAppliedVolts = driveMotor.getMotorVoltage();
+        driveAcceleration = driveMotor.getAcceleration();
+        driveCurrent = driveMotor.getSupplyCurrent();
+
     }
 
     ///// CANCODER /////
@@ -129,22 +149,20 @@ public class HASwerveModule {
     ///// MOTOR ENCODERS /////
 
     public void resetEncoders() {
-        driveMotor.setEncoderPosition(0);
+        driveMotor.resetEncoder();
         directionMotor.setEncoderPosition(0);
     }
 
-    public double getDriveEncoder() {
-        return driveMotor.getEncPosition() * (isDriveEncoderReversed ? -1.0 : 1.0);
+    public StatusSignal<Double> getDriveEncoder() {
+        return drivePosition;
     }
 
     public double getDriveDistance() {
-        return driveMotor.getEncPosition() * HighAltitudeConstants.SWERVE_DRIVE_METERS_PER_PULSE
-                * (isDriveEncoderReversed ? -1.0 : 1.0);
+        return drivePosition.getValueAsDouble() * HighAltitudeConstants.SWERVE_DRIVE_METERS_PER_REVOLUTION;
     }
 
     public double getDriveVelocity() {
-        return driveMotor.getEncVelocity() * HighAltitudeConstants.SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS
-                * (isDriveEncoderReversed ? -1.0 : 1.0);
+        return driveVelocity.getValueAsDouble() * HighAltitudeConstants.SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS;
     }
 
     public double getDirectionEncoder() {
@@ -158,7 +176,7 @@ public class HASwerveModule {
 
     // Getters for the motor objects themselves
 
-    public HighAltitudeMotorController getDriveMotor() {
+    public SuperTalonFX getDriveMotor() {
         return driveMotor;
     }
 
@@ -257,7 +275,7 @@ public class HASwerveModule {
     public void controlTunning(String identifier) {
         // This is what you should print:
         // 1. Velocity of the DriveMotorEnc
-        SmartDashboard.putNumber(identifier, driveMotor.getEncVelocity());
+        SmartDashboard.putNumber(identifier, driveVelocity.getValueAsDouble());
 
         // 2. Graphic of the CANCoder Angle
         SmartDashboard.putNumber(identifier, getAbsoluteEncoderRAD());
@@ -277,5 +295,12 @@ public class HASwerveModule {
         // 7. Setpoint of the ProfiledPIDController Acceleration
         SmartDashboard.putNumber(identifier, directionPIDAccelerationSetPoint);
 
+    }
+
+    public void putEncoderValuesInvertedApplied(String identifier) {
+        SmartDashboard.putNumber(identifier + "DriveEncPos", getDriveEncoder().getValueAsDouble());
+        SmartDashboard.putNumber(identifier + "DirEncPos", getDirectionEncoder());
+        SmartDashboard.putNumber(identifier + "AbsEncPos",
+                absoluteEncoderController.getPosition().getValueAsDouble() * (isTalonEncoderReversed ? -1.0 : 1.0));
     }
 }

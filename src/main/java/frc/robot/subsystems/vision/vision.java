@@ -30,9 +30,11 @@ public class vision extends SubsystemBase {
   PhotonPipelineResult resultCorner, resultShooter, resultNoteCam;
 
   PhotonPoseEstimator poseEstimatorCorner, poseEstimatorShooter;
+
   private ArrayList<Optional<EstimatedRobotPose>> estimatedPoseCorner, estimatedPoseShooter;
-  private Optional<EstimatedRobotPose> pose1 = poseEstimatorShooter.update();
-  private Optional<EstimatedRobotPose> pose2 = poseEstimatorCorner.update();
+
+  private Optional<EstimatedRobotPose> pose1;
+  private Optional<EstimatedRobotPose> pose2;
 
   /** Creates a new vision. */
   public vision() {
@@ -64,6 +66,11 @@ public class vision extends SubsystemBase {
 
       e.printStackTrace();
     }
+
+    // Initialize pose1 and pose2 after poseEstimators are created
+    pose1 = poseEstimatorShooter.update();
+    pose2 = poseEstimatorCorner.update();
+
     resultNoteCam = noteCamera.getLatestResult();
     resultShooter = tagsCameraShooter.getLatestResult();
     resultCorner = tagsCameraCorner.getLatestResult();
