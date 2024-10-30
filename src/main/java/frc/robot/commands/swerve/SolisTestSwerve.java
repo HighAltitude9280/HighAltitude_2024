@@ -8,12 +8,12 @@ import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.swerve.HASwerveModule;
+import frc.robot.subsystems.swerve.HighAltitudeSwerveModule;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
 
 public class SolisTestSwerve extends Command {
   SwerveDriveTrain swerveDriveTrain;
-  ArrayList<HASwerveModule> modules;
+  ArrayList<HighAltitudeSwerveModule> modules;
 
   /** Creates a new TestSwerve. */
   public SolisTestSwerve() {
@@ -34,11 +34,11 @@ public class SolisTestSwerve extends Command {
     double speed = 0.25;
     double turn = 0;
 
-    for (HASwerveModule swerveModule : modules) {
+    for (HighAltitudeSwerveModule swerveModule : modules) {
       swerveModule.getDriveMotor().set(speed);
       swerveModule.getDirectionMotor().set(turn);
     }
-  System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+    System.out.println("AAAAAAAAAAAAAAAAAAAAA");
     /*
      * for (HighAltitudeSwerveModule swerveModule : modules) {
      * swerveModule.getDriveMotor().set(0);

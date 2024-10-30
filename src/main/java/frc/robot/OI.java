@@ -14,9 +14,7 @@ import frc.robot.commands.manipulator.pivot.manual.ShooterPivotUp;
 import frc.robot.commands.manipulator.shooter.ControlShooter;
 import frc.robot.commands.manipulator.transition.IntakeIndexerIn;
 import frc.robot.commands.swerve.DefaultSwerveDriveNew;
-import frc.robot.commands.swerve.SolisTestSwerve;
-import frc.robot.commands.swerve.TestSwerve;
-import frc.robot.commands.swerve.swerveParameters.ResetOdometryZeros;
+import frc.robot.commands.swerve.SolisTestSwerve;import frc.robot.commands.swerve.swerveParameters.ResetOdometryZeros;
 import frc.robot.commands.swerve.swerveParameters.SetIsFieldOriented;
 import frc.robot.resources.joysticks.HighAltitudeJoystick;
 import frc.robot.resources.joysticks.HighAltitudeJoystick.AxisType;
@@ -48,8 +46,6 @@ public class OI {
 
                 pilot.onTrueCombo(new ResetOdometryZeros(), ButtonType.START, ButtonType.BACK);
                 pilot.onTrue(ButtonType.X, new DefaultSwerveDriveNew());
-
-                pilot.whileTrue(ButtonType.POV_N, new TestSwerve(5.4, 45));
 
                 pilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
                 pilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());

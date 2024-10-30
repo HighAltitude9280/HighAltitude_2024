@@ -4,53 +4,59 @@
 
 package frc.robot.subsystems.swerve;
 
-import frc.robot.HighAltitudeConstants;
-import frc.robot.Robot;
-import frc.robot.RobotMap;
-import frc.robot.resources.math.Math;
-import frc.robot.subsystems.vision.vision;
-
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindHolonomic;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.HighAltitudeConstants;
+import frc.robot.Robot;
+import frc.robot.RobotMap;
+import frc.robot.resources.math.Math;
+import frc.robot.subsystems.vision.vision;
 
 public class SwerveDriveTrain extends SubsystemBase {
-  /** Creates a new SwerveDriveTrain. */
-  private HASwerveModule frontLeft, frontRight, backLeft, backRight;
-  ArrayList<HASwerveModule> modules;
+  private HighAltitudeSwerveModule frontLeft, frontRight, backLeft, backRight;
+  ArrayList<HighAltitudeSwerveModule> modules;
+
   private SwerveDrivePoseEstimator swerveDrivePoseEstimator;
 
+  private boolean isSlower = false;
   private boolean isFieldOriented = true;
   private boolean isOnCompetitiveField = false;
 
   private Field2d field = new Field2d();
 
   private SlewRateLimiter speedLimiter, strafeLimiter, turnLimiter;
-  public boolean cleanUpMode = false;
 
+  /** Creates a new SwerveDrive. */
   public SwerveDriveTrain() {
-    frontLeft = new HASwerveModule(
+    frontLeft = new HighAltitudeSwerveModule(
         RobotMap.SWERVE_FRONT_LEFT_DRIVE_MOTOR_PORT,
         RobotMap.SWERVE_FRONT_LEFT_DRIVE_MOTOR_TYPE,
         RobotMap.SWERVE_FRONT_LEFT_DRIVE_MOTOR_INVERTED,
@@ -62,7 +68,7 @@ public class SwerveDriveTrain extends SubsystemBase {
         RobotMap.SWERVE_FRONT_LEFT_ENCODED_TALON_PORT,
         RobotMap.SWERVE_FRONT_LEFT_DIRECTION_ENCODER_OFFSET_PULSES,
         RobotMap.SWERVE_FRONT_LEFT_ENCODED_TALON_INVERTED);
-    frontRight = new HASwerveModule(
+    frontRight = new HighAltitudeSwerveModule(
         RobotMap.SWERVE_FRONT_RIGHT_DRIVE_MOTOR_PORT,
         RobotMap.SWERVE_FRONT_RIGHT_DRIVE_MOTOR_TYPE,
         RobotMap.SWERVE_FRONT_RIGHT_DRIVE_MOTOR_INVERTED,
@@ -74,7 +80,7 @@ public class SwerveDriveTrain extends SubsystemBase {
         RobotMap.SWERVE_FRONT_RIGHT_ENCODED_TALON_PORT,
         RobotMap.SWERVE_FRONT_RIGHT_DIRECTION_ENCODER_OFFSET_PULSES,
         RobotMap.SWERVE_FRONT_RIGHT_ENCODED_TALON_INVERTED);
-    backLeft = new HASwerveModule(
+    backLeft = new HighAltitudeSwerveModule(
         RobotMap.SWERVE_BACK_LEFT_DRIVE_MOTOR_PORT,
         RobotMap.SWERVE_BACK_LEFT_DRIVE_MOTOR_TYPE,
         RobotMap.SWERVE_BACK_LEFT_DRIVE_MOTOR_INVERTED,
@@ -86,7 +92,7 @@ public class SwerveDriveTrain extends SubsystemBase {
         RobotMap.SWERVE_BACK_LEFT_ENCODED_TALON_PORT,
         RobotMap.SWERVE_BACK_LEFT_DIRECTION_ENCODER_OFFSET_PULSES,
         RobotMap.SWERVE_BACK_LEFT_ENCODED_TALON_INVERTED);
-    backRight = new HASwerveModule(
+    backRight = new HighAltitudeSwerveModule(
         RobotMap.SWERVE_BACK_RIGHT_DRIVE_MOTOR_PORT,
         RobotMap.SWERVE_BACK_RIGHT_DRIVE_MOTOR_TYPE,
         RobotMap.SWERVE_BACK_RIGHT_DRIVE_MOTOR_INVERTED,
@@ -99,7 +105,7 @@ public class SwerveDriveTrain extends SubsystemBase {
         RobotMap.SWERVE_BACK_RIGHT_DIRECTION_ENCODER_OFFSET_PULSES,
         RobotMap.SWERVE_BACK_RIGHT_ENCODED_TALON_INVERTED);
 
-    modules = new ArrayList<HASwerveModule>();
+    modules = new ArrayList<HighAltitudeSwerveModule>();
     modules.add(frontLeft);
     modules.add(frontRight);
     modules.add(backLeft);
@@ -118,7 +124,7 @@ public class SwerveDriveTrain extends SubsystemBase {
         this::getPose,
         this::resetPose,
         this::getChassisSpeeds,
-        this::driveSpeed,
+        this::driveRobotRelative,
         HighAltitudeConstants.pathFollowerConfig,
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red
@@ -175,15 +181,9 @@ public class SwerveDriveTrain extends SubsystemBase {
     turn = turnLimiter.calculate(turn);
 
     // 3. Scale input to teleop max speed
-    if (cleanUpMode = true) {
-      speed *= HighAltitudeConstants.SWERVE_DRIVE_CLEANUP_MODE_SPEED_METERS_PER_SECOND;
-      strafe *= HighAltitudeConstants.SWERVE_DRIVE_CLEANUP_MODE_SPEED_METERS_PER_SECOND;
-      turn *= HighAltitudeConstants.SWERVE_DRIVE_CLEANUP_MODE_SPEED_METERS_PER_SECOND;
-    } else {
-      speed *= HighAltitudeConstants.SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND;
-      strafe *= HighAltitudeConstants.SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND;
-      turn *= HighAltitudeConstants.SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND;
-    }
+    speed *= HighAltitudeConstants.SWERVE_DRIVE_TELEOP_MAX_SPEED_METERS_PER_SECOND;
+    strafe *= HighAltitudeConstants.SWERVE_DRIVE_TELEOP_MAX_SPEED_METERS_PER_SECOND;
+    turn *= HighAltitudeConstants.SWERVE_DIRECTION_TELEOP_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
 
     // 4. Construct the chassis speeds
     ChassisSpeeds chassisSpeeds;
@@ -193,13 +193,11 @@ public class SwerveDriveTrain extends SubsystemBase {
     } else {
       chassisSpeeds = new ChassisSpeeds(speed, strafe, turn);
     }
-    driveSpeed(chassisSpeeds);
-  }
 
-  // 5. Set the states to the swerve modules
-  public void driveSpeed(ChassisSpeeds chassisSpeeds) {
+    // 5. Set the states to the swerve modules
     SwerveModuleState[] moduleStates = HighAltitudeConstants.SWERVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
     setModuleStates(moduleStates);
+
   }
 
   /**
@@ -224,7 +222,6 @@ public class SwerveDriveTrain extends SubsystemBase {
    * 
    * @return True if the robot has arrived to the target.
    */
-
   public boolean turnToAngle(double angle, double maxPower, boolean gyro) {
 
     double delta;
@@ -250,23 +247,31 @@ public class SwerveDriveTrain extends SubsystemBase {
 
     vision vision = Robot.getRobotContainer().getVision();
 
-    double xPower = (HighAltitudeConstants.YAW_OFFSET - vision.getYaw()) *
-        HighAltitudeConstants.YAW_CORRECTION;
-    double yPower = (area_target -
-        Robot.getRobotContainer().getVision().getArea()) *
-        HighAltitudeConstants.DISTANCE_CORRECTION;
+    double xPower = (HighAltitudeConstants.YAW_OFFSET - vision.getYaw()) * HighAltitudeConstants.YAW_CORRECTION;
+    double yPower = (area_target - Robot.getRobotContainer().getVision().getArea())
+        * HighAltitudeConstants.DISTANCE_CORRECTION;
 
     xPower = Math.clamp(xPower * maxPower, -maxPower, maxPower);
     yPower = Math.clamp(yPower * maxPower, -maxPower, maxPower);
 
-    SmartDashboard.putNumber("deltaX", HighAltitudeConstants.YAW_OFFSET -
-        vision.getYaw());
-    SmartDashboard.putNumber("deltaY", (area_target -
-        Robot.getRobotContainer().getVision().getArea()));
+    SmartDashboard.putNumber("deltaX", HighAltitudeConstants.YAW_OFFSET - vision.getYaw());
+    SmartDashboard.putNumber("deltaY", (area_target - Robot.getRobotContainer().getVision().getArea()));
     SmartDashboard.putNumber("Yawwwww", vision.getYaw());
     defaultDrive(-yPower, -xPower, 0);
 
   }
+
+  public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
+    ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+
+    // SwerveModuleState[] targetStates =
+    // HighAltitudeConstants.SWERVE_KINEMATICS.toSwerveModuleStates(targetSpeeds);
+    SwerveModuleState[] targetStates = HighAltitudeConstants.SWERVE_KINEMATICS
+        .toSwerveModuleStates(robotRelativeSpeeds);
+    setModuleStates(targetStates);
+  }
+
+  // Controlling modules
 
   public void setModuleStates(SwerveModuleState[] states) {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, HighAltitudeConstants.SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND);
@@ -284,11 +289,12 @@ public class SwerveDriveTrain extends SubsystemBase {
   }
 
   public void setModulesInXPosition() {
-    frontLeft.setState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
-    frontRight.setState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
-    backLeft.setState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
-    backRight.setState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+    frontLeft.setStateRegardlessOfSpeed(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+    frontRight.setStateRegardlessOfSpeed(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+    backLeft.setStateRegardlessOfSpeed(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+    backRight.setStateRegardlessOfSpeed(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
+
   // Odometry
 
   public void updateOdometry() {
@@ -313,8 +319,7 @@ public class SwerveDriveTrain extends SubsystemBase {
   }
 
   public void addVisionMeasurement(Pose2d visionMeasurement, double timeStampSeconds) {
-    swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement,
-        timeStampSeconds);
+    swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement, timeStampSeconds);
   }
 
   public Pose2d getPose() {
@@ -331,26 +336,39 @@ public class SwerveDriveTrain extends SubsystemBase {
 
   // Getters for the modules
 
-  public HASwerveModule getFrontLeft() {
+  public HighAltitudeSwerveModule getFrontLeft() {
     return frontLeft;
   }
 
-  public HASwerveModule getFrontRight() {
+  public HighAltitudeSwerveModule getFrontRight() {
     return frontRight;
   }
 
-  public HASwerveModule getBackLeft() {
+  public HighAltitudeSwerveModule getBackLeft() {
     return backLeft;
   }
 
-  public HASwerveModule getBackRight() {
+  public HighAltitudeSwerveModule getBackRight() {
     return backRight;
   }
 
-  public ArrayList<HASwerveModule> getModules() {
+  public ArrayList<HighAltitudeSwerveModule> getModules() {
     return modules;
   }
+
   // Parameters getters and setters
+
+  public boolean getIsSlower() {
+    return isSlower;
+  }
+
+  public void toggleIsSlower() {
+    isSlower = !isSlower;
+  }
+
+  public void setIsSlower(boolean shouldBeSlower) {
+    isSlower = shouldBeSlower;
+  }
 
   public boolean getIsFieldOriented() {
     return isFieldOriented;
@@ -365,8 +383,8 @@ public class SwerveDriveTrain extends SubsystemBase {
   }
 
   public void setModulesBrakeMode(boolean doBrake) {
-    for (HASwerveModule module : modules) {
-      module.getDriveMotor();
+    for (HighAltitudeSwerveModule module : modules) {
+      module.getDriveMotor().setNeutralMode(NeutralModeValue.Brake);
       module.getDirectionMotor().setBrakeMode(doBrake);
       System.out.println("BrakeMode: " + doBrake);
     }
@@ -380,10 +398,8 @@ public class SwerveDriveTrain extends SubsystemBase {
         HighAltitudeConstants.PATHFINDING_MAX_ANGULAR_ANGULAR_ACCELERATION);
 
     Subsystem swerve = this;
-    Command pathCommand = new PathfindHolonomic(targetPose, constraints,
-        this::getPose, this::getChassisSpeeds,
-        this::driveSpeed, HighAltitudeConstants.pathFollowerConfig, swerve);
-    // antes this::driveRobotRelative
+    Command pathCommand = new PathfindHolonomic(targetPose, constraints, this::getPose, this::getChassisSpeeds,
+        this::driveRobotRelative, HighAltitudeConstants.pathFollowerConfig, swerve);
 
     return pathCommand;
   }
@@ -411,28 +427,25 @@ public class SwerveDriveTrain extends SubsystemBase {
   public boolean pointToTarget(Pose2d target, double maxPower) {
     var pose = getPose();
 
-    if (getPose() != null) {
-      double deltaX = target.getX() - pose.getX();
-      double deltaY = target.getY() - pose.getY();
-      double angle = java.lang.Math.signum(deltaY) * 90;
+    double deltaX = target.getX() - pose.getX();
+    double deltaY = target.getY() - pose.getY();
+    double angle = java.lang.Math.signum(deltaY) * 90;
 
-      if (deltaX != 0) {
-        angle = Math.toDegrees(Math.atan(Math.abs(deltaY / deltaX)));
+    if (deltaX != 0) {
+      angle = Math.toDegrees(Math.atan(Math.abs(deltaY / deltaX)));
 
-        if (deltaY < 0 && deltaX > 0)
-          angle *= -1;
-        else if (deltaY > 0 && deltaX < 0)
-          angle = 180 - angle;
-        else if (deltaY < 0 && deltaX < 0)
-          angle = angle - 180;
-      }
+      if (deltaY < 0 && deltaX > 0)
+        angle *= -1;
+      else if (deltaY > 0 && deltaX < 0)
+        angle = 180 - angle;
+      else if (deltaY < 0 && deltaX < 0)
+        angle = angle - 180;
 
-      angle = Math.getOppositeAngle(angle);
-
-      return turnToAngle(angle, maxPower);
-    } else {
-      return false;
     }
+
+    angle = Math.getOppositeAngle(angle);
+
+    return turnToAngle(angle, maxPower);
   }
 
   public void driveToTarget(double yaw, double maxTurnPower, double maxDrivePower) {
@@ -460,15 +473,7 @@ public class SwerveDriveTrain extends SubsystemBase {
   public void periodic() {
     updateOdometry();
     updateOdometryWithVision();
-    updateEncoders();
     putAllInfoInSmartDashboard();
-  }
-
-  public void updateEncoders() {
-    frontLeft.updateEncoders();
-    frontRight.updateEncoders();
-    backLeft.updateEncoders();
-    backRight.updateEncoders();
   }
 
   public void putAllInfoInSmartDashboard() {
@@ -477,15 +482,40 @@ public class SwerveDriveTrain extends SubsystemBase {
     frontRight.putProcessedValues("FR");
     backRight.putProcessedValues("BR");
     backLeft.putProcessedValues("BL");
-
     frontLeft.putEncoderValuesInvertedApplied("FL");
     frontRight.putEncoderValuesInvertedApplied("FR");
     backLeft.putEncoderValuesInvertedApplied("BL");
     backRight.putEncoderValuesInvertedApplied("BR");
 
-    frontLeft.controlTunning("FL");
-    frontRight.controlTunning("FR");
-    backLeft.controlTunning("BL");
-    backRight.controlTunning("BR");
+    SmartDashboard.putNumber("FL Steer Power",
+        frontLeft.getDirectionMotor().getOutput());
+    SmartDashboard.putNumber("FR Steer Power",
+        frontRight.getDirectionMotor().getOutput());
+    SmartDashboard.putNumber("BL Steer Power",
+        backLeft.getDirectionMotor().getOutput());
+    SmartDashboard.putNumber("BR Steer Power",
+        backRight.getDirectionMotor().getOutput());
+
+    SmartDashboard.putNumber("FL Target",
+        frontLeft.getPIDController().getSetpoint());
+    SmartDashboard.putNumber("FL Current", frontLeft.getAbsoluteEncoderRad());
+    SmartDashboard.putNumber("FR Target",
+        frontRight.getPIDController().getSetpoint());
+    SmartDashboard.putNumber("FR Current", frontRight.getAbsoluteEncoderRad());
+    SmartDashboard.putNumber("BL Target",
+        backLeft.getPIDController().getSetpoint());
+    SmartDashboard.putNumber("BL Current", backLeft.getAbsoluteEncoderRad());
+    SmartDashboard.putNumber("BR Target",
+        backRight.getPIDController().getSetpoint());
+    SmartDashboard.putNumber("BR Current", backRight.getAbsoluteEncoderRad());
+
+    SmartDashboard.putNumber("Odometry X", swerveDrivePoseEstimator.getEstimatedPosition().getX());
+    SmartDashboard.putNumber("Odometry Y", swerveDrivePoseEstimator.getEstimatedPosition().getY());
+    SmartDashboard.putNumber("Odometry Degree",
+        swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+
+    SmartDashboard.putNumber("XSpeed", getChassisSpeeds().vxMetersPerSecond);
+    SmartDashboard.putNumber("YSpeed", getChassisSpeeds().vyMetersPerSecond);
+
   }
 }

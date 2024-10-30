@@ -298,4 +298,8 @@ public class HighAltitudeConstants {
 
         public static final Pose2d CURRENT_ROBOT_POSE = null;
 
+        public static final double SWERVE_DRIVE_TELEOP_MAX_SPEED_METERS_PER_SECOND = 0.87;
+
+        public static final double SWERVE_DIRECTION_TELEOP_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI * 0.85;
+
 }
