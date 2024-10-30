@@ -7,6 +7,7 @@ package frc.robot.commands.swerve;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.HighAltitudeSwerveModule;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
@@ -31,21 +32,13 @@ public class SolisTestSwerve extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed = 0.25;
-    double turn = 0;
+    double speed = OI.getInstance().getDefaultSwerveDriveSpeed();
+    double turn = OI.getInstance().getDefaultSwerveDriveTurn();
 
     for (HighAltitudeSwerveModule swerveModule : modules) {
       swerveModule.getDriveMotor().set(speed);
       swerveModule.getDirectionMotor().set(turn);
     }
-    System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-    /*
-     * for (HighAltitudeSwerveModule swerveModule : modules) {
-     * swerveModule.getDriveMotor().set(0);
-     * swerveModule.getDirectionMotor().set(0.08);
-     * }
-     */
-    // swerveDriveTrain.getBackRight().getDirectionMotor().set(turn);
   }
 
   // Called once the command ends or is interrupted.
@@ -56,12 +49,6 @@ public class SolisTestSwerve extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    /*
-     * if(swerveDriveTrain.{
-     * return true;
-     * } else {
-     */
     return false;
-
   }
 }
