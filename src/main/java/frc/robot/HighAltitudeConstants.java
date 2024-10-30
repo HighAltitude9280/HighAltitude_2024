@@ -31,7 +31,7 @@ public class HighAltitudeConstants {
         // NUMBERS. (Driven / Driver) //pinion
         public static final double SWERVE_DRIVE_GEAR_RATIO = (50.0 * 16.0 * 45.0) / (16.0 * 28.0 * 15.0);
         // ft/s //ft -> in //im -> m
-        public static final double SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND = 20.4 * 12 * 0.0254;
+        public static final double SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND = 19.5 * 12 * 0.0254;
 
         /////////// KINEMATICS
         // Distance left - right (meters)
@@ -87,13 +87,9 @@ public class HighAltitudeConstants {
          */
 
         // FEEDBACK //
-        public static final double SWERVE_DRIVE_kP = 0;
+        public static final double SWERVE_DRIVE_kP = 1.7375;
         public static final double SWERVE_DRIVE_kI = 0;
-        public static final double SWERVE_DRIVE_kD = 0;
-
-        // FEEDFORWARD //
-        public static final double SWERVE_DRIVE_kS = 0;
-        public static final double SWERVE_DRIVE_kV = 0;
+        public static final double SWERVE_DRIVE_kD = 0.0;
 
         // The reported encoder position after one revolution, check encoder
         // specifications.
@@ -106,8 +102,10 @@ public class HighAltitudeConstants {
 
         // Use this constant to convert from motor velocity to meters per second
         // encoder velocity * this constant = meters/second
-        public static final double SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS = (SWERVE_DRIVE_METERS_PER_REVOLUTION)
-                        / 60;
+        public static final double SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS = SWERVE_DRIVE_METERS_PER_REVOLUTION;
+
+        public static final double SWERVE_VELOCITY_IN_METERS_PER_SEC = (10980 / 2048)
+                        * (SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS);
 
         public static final double SWERVE_DRIVE_CLEANUP_MODE_SPEED_METERS_PER_SECOND = SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND
                         * 0.8;
@@ -177,13 +175,13 @@ public class HighAltitudeConstants {
          */
         // FEEDBACK //
 
-        public static final double SWERVE_DIRECTION_kP = 0; // 0.128
+        public static final double SWERVE_DIRECTION_kP = 0.0; // 0.128
         public static final double SWERVE_DIRECTION_kI = 0; // 0.01
         public static final double SWERVE_DIRECTION_kD = 0; // 0.0128
 
         // FEEDFORWARD //
         public static final double SWERVE_DIRECTION_kS = 0;
-        public static final double SWERVE_DIRECTION_kV = 0;
+        public static final double SWERVE_DIRECTION_kV = 0.01;
         public static final double SWERVE_DIRECTION_kA = 0; // no sé si dejarlo en 0
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
@@ -297,5 +295,7 @@ public class HighAltitudeConstants {
         public static final Pose2d AMP_POS = new Pose2d(new Translation2d(3., 4.31), new Rotation2d(-Math.PI / 2));
 
         public static final double SWERVE_DRIVE_ON_TARGET = 0;
+
+        public static final Pose2d CURRENT_ROBOT_POSE = null;
 
 }

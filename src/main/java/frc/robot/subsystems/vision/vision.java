@@ -18,6 +18,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -122,6 +123,12 @@ public class vision extends SubsystemBase {
   }
 
   public ArrayList<Optional<EstimatedRobotPose>> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
+    // Check if prevEstimatedRobotPose is null
+    if (prevEstimatedRobotPose == null) {
+      // Handle the null case, e.g., log a warning or return an empty list
+      return new ArrayList<>(List.of(pose1, pose2)); // Return current poses without updating
+    }
+    
     poseEstimatorShooter.setReferencePose(prevEstimatedRobotPose);
     ArrayList<Optional<EstimatedRobotPose>> result = new ArrayList<>();
     result.add(pose1);
@@ -135,6 +142,5 @@ public class vision extends SubsystemBase {
     pose1 = poseEstimatorShooter.update();
     pose2 = poseEstimatorCorner.update();
     getEstimatedPosition();
-    getEstimatedGlobalPose(null);
   }
 }

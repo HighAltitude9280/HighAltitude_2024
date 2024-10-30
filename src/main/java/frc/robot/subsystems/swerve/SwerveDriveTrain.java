@@ -307,7 +307,8 @@ public class SwerveDriveTrain extends SubsystemBase {
       if (pos == null || pos.isEmpty())
         continue;
       var pose = pos.get();
-      swerveDrivePoseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+      swerveDrivePoseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+          pose.timestampSeconds);
     }
   }
 
@@ -410,25 +411,28 @@ public class SwerveDriveTrain extends SubsystemBase {
   public boolean pointToTarget(Pose2d target, double maxPower) {
     var pose = getPose();
 
-    double deltaX = target.getX() - pose.getX();
-    double deltaY = target.getY() - pose.getY();
-    double angle = java.lang.Math.signum(deltaY) * 90;
+    if (getPose() != null) {
+      double deltaX = target.getX() - pose.getX();
+      double deltaY = target.getY() - pose.getY();
+      double angle = java.lang.Math.signum(deltaY) * 90;
 
-    if (deltaX != 0) {
-      angle = Math.toDegrees(Math.atan(Math.abs(deltaY / deltaX)));
+      if (deltaX != 0) {
+        angle = Math.toDegrees(Math.atan(Math.abs(deltaY / deltaX)));
 
-      if (deltaY < 0 && deltaX > 0)
-        angle *= -1;
-      else if (deltaY > 0 && deltaX < 0)
-        angle = 180 - angle;
-      else if (deltaY < 0 && deltaX < 0)
-        angle = angle - 180;
+        if (deltaY < 0 && deltaX > 0)
+          angle *= -1;
+        else if (deltaY > 0 && deltaX < 0)
+          angle = 180 - angle;
+        else if (deltaY < 0 && deltaX < 0)
+          angle = angle - 180;
+      }
 
+      angle = Math.getOppositeAngle(angle);
+
+      return turnToAngle(angle, maxPower);
+    } else {
+      return false;
     }
-
-    angle = Math.getOppositeAngle(angle);
-
-    return turnToAngle(angle, maxPower);
   }
 
   public void driveToTarget(double yaw, double maxTurnPower, double maxDrivePower) {
@@ -456,7 +460,15 @@ public class SwerveDriveTrain extends SubsystemBase {
   public void periodic() {
     updateOdometry();
     updateOdometryWithVision();
+    updateEncoders();
     putAllInfoInSmartDashboard();
+  }
+
+  public void updateEncoders() {
+    frontLeft.updateEncoders();
+    frontRight.updateEncoders();
+    backLeft.updateEncoders();
+    backRight.updateEncoders();
   }
 
   public void putAllInfoInSmartDashboard() {
@@ -471,5 +483,9 @@ public class SwerveDriveTrain extends SubsystemBase {
     backLeft.putEncoderValuesInvertedApplied("BL");
     backRight.putEncoderValuesInvertedApplied("BR");
 
+    frontLeft.controlTunning("FL");
+    frontRight.controlTunning("FR");
+    backLeft.controlTunning("BL");
+    backRight.controlTunning("BR");
   }
 }

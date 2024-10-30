@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.HighAltitudeConstants;
 import frc.robot.resources.components.speedController.HighAltitudeMotorController;
@@ -56,11 +57,11 @@ public class HASwerveModule {
     private SuperTalonFX driveMotor;
     private boolean isDriveEncoderReversed;
 
-    private final StatusSignal<Double> drivePosition;
-    private final StatusSignal<Double> driveVelocity;
-    private final StatusSignal<Double> driveAppliedVolts;
-    private final StatusSignal<Double> driveAcceleration;
-    private final StatusSignal<Double> driveCurrent;
+    private StatusSignal<Double> drivePosition;
+    private StatusSignal<Double> driveVelocity;
+    private StatusSignal<Double> driveAppliedVolts;
+    private StatusSignal<Double> driveAcceleration;
+    private StatusSignal<Double> driveCurrent;
 
     TalonFXConfiguration driveMotorConfiguration = new TalonFXConfiguration();
 
@@ -104,9 +105,6 @@ public class HASwerveModule {
                 HighAltitudeConstants.SWERVE_DIRECTION_kA);
 
         // DRIVE CONTROL //
-        driveFeedforward = new SimpleMotorFeedforward(HighAltitudeConstants.SWERVE_DRIVE_kS,
-                HighAltitudeConstants.SWERVE_DRIVE_kV);
-
         drivePIDController = new PIDController(HighAltitudeConstants.SWERVE_DRIVE_kP,
                 HighAltitudeConstants.SWERVE_DRIVE_kI, HighAltitudeConstants.SWERVE_DRIVE_kD);
 
@@ -153,6 +151,14 @@ public class HASwerveModule {
         directionMotor.setEncoderPosition(0);
     }
 
+    public void updateEncoders() {
+        drivePosition = driveMotor.getPosition();
+        driveVelocity = driveMotor.getVelocity();
+        driveAppliedVolts = driveMotor.getMotorVoltage();
+        driveAcceleration = driveMotor.getAcceleration();
+        driveCurrent = driveMotor.getSupplyCurrent();
+    }
+
     public StatusSignal<Double> getDriveEncoder() {
         return drivePosition;
     }
@@ -163,6 +169,10 @@ public class HASwerveModule {
 
     public double getDriveVelocity() {
         return driveVelocity.getValueAsDouble() * HighAltitudeConstants.SWERVE_DRIVE_METERS_PER_SEC_PER_VELOCITY_UNITS;
+    }
+
+    public double getDriveMetersRevolution() {
+        return driveVelocity.getValueAsDouble() * HighAltitudeConstants.SWERVE_DRIVE_METERS_PER_REVOLUTION;
     }
 
     public double getDirectionEncoder() {
@@ -216,12 +226,13 @@ public class HASwerveModule {
     }
 
     public void controlSwerveSpeed(double mps) {
-        double driveOutput = driveFeedforward.calculate(mps);
-        driveOutput += drivePIDController.calculate(getDriveVelocity(), mps);
+        double driveOutput = drivePIDController.calculate(getDriveVelocity(), mps);
         Math.clamp(driveOutput, -HighAltitudeConstants.MAX_VOLTAGE, HighAltitudeConstants.MAX_VOLTAGE);
         driveMotor.setVoltage(driveOutput);
 
         double delta = mps - getDriveVelocity();
+        SmartDashboard.putNumber("Error Drive PID", delta);
+        SmartDashboard.putNumber("Voltage Output Drive PID", driveOutput);
 
         mpsOnTarget = (Math.abs(delta) <= HighAltitudeConstants.SWERVE_DRIVE_ON_TARGET);
     }
@@ -275,25 +286,26 @@ public class HASwerveModule {
     public void controlTunning(String identifier) {
         // This is what you should print:
         // 1. Velocity of the DriveMotorEnc
-        SmartDashboard.putNumber(identifier, driveVelocity.getValueAsDouble());
+        SmartDashboard.putNumber(identifier + "DriveVelocity", getDriveVelocity());
+        SmartDashboard.putNumber(identifier + "Drive Meters Revolution", getDriveMetersRevolution());
 
         // 2. Graphic of the CANCoder Angle
-        SmartDashboard.putNumber(identifier, getAbsoluteEncoderRAD());
+        SmartDashboard.putNumber(identifier + "CANCoder Angle", getAbsoluteEncoderRAD());
 
         // 3. Graphic of the CANCoder Velocity
-        SmartDashboard.putNumber(identifier, getEncoderVelocity());
+        SmartDashboard.putNumber(identifier + "CANCoder Velocity", getEncoderVelocity());
 
         // 4. Graphic of the CANCoder Acceleration
-        SmartDashboard.putNumber(identifier, getEncoderAcceleration());
+        SmartDashboard.putNumber(identifier + "CANCoder Acceleration", getEncoderAcceleration());
 
         // 5. Setpoint of the ProfiledPIDController Angle
-        SmartDashboard.putNumber(identifier, directionPIDAngleSetPoint);
+        SmartDashboard.putNumber(identifier + "Direction Angle SetPoint", directionPIDAngleSetPoint);
 
         // 6. Setpoint of the ProfiledPIDController Velocity
-        SmartDashboard.putNumber(identifier, directionPIDVelocitySetPoint);
+        SmartDashboard.putNumber(identifier + "Direction Velocity SetPoint", directionPIDVelocitySetPoint);
 
         // 7. Setpoint of the ProfiledPIDController Acceleration
-        SmartDashboard.putNumber(identifier, directionPIDAccelerationSetPoint);
+        SmartDashboard.putNumber(identifier + "Direction Acceleration SetPoint", directionPIDAccelerationSetPoint);
 
     }
 

@@ -472,15 +472,15 @@ public class HighAltitudeJoystick {
      * Cancels the given command whenever the condition changes from 'pressed' to
      * 'unpressed'.
      *
-     * @param buttonType the button which will trigger the command
+     * @param povE the button which will trigger the command
      * @param command    command to be assigned to button
      */
-    public void whileTrue(ButtonType buttonType, Command command) {
+    public void whileTrue(ButtonType povE, Command command) {
         try {
-            Trigger chosenButton = joystickButtonConfiguration.get(buttonType);
+            Trigger chosenButton = joystickButtonConfiguration.get(povE);
             chosenButton.whileTrue(command);
         } catch (NullPointerException e) {
-            reportButtonError(buttonType, command);
+            reportButtonError(povE, command);
         }
     }
 

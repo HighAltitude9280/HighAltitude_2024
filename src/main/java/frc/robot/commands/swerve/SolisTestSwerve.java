@@ -5,22 +5,21 @@
 package frc.robot.commands.swerve;
 
 import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.HASwerveModule;
 import frc.robot.subsystems.swerve.SwerveDriveTrain;
 
-public class TestSwerve extends Command {
+public class SolisTestSwerve extends Command {
   SwerveDriveTrain swerveDriveTrain;
   ArrayList<HASwerveModule> modules;
-  double mps, target;
 
   /** Creates a new TestSwerve. */
-  public TestSwerve(double mps, double target) {
+  public SolisTestSwerve() {
     swerveDriveTrain = Robot.getRobotContainer().getSwerveDriveTrain();
     addRequirements(swerveDriveTrain);
-    this.mps = mps;
-    this.target = target;
+
     modules = swerveDriveTrain.getModules();
   }
 
@@ -32,10 +31,22 @@ public class TestSwerve extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-for (HASwerveModule swerveModule : modules) {
-      swerveModule.controlSwerveSpeed(mps);
-      swerveModule.controlSwerveDirection(target);
-    }  }
+    double speed = 0.25;
+    double turn = 0;
+
+    for (HASwerveModule swerveModule : modules) {
+      swerveModule.getDriveMotor().set(speed);
+      swerveModule.getDirectionMotor().set(turn);
+    }
+  System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+    /*
+     * for (HighAltitudeSwerveModule swerveModule : modules) {
+     * swerveModule.getDriveMotor().set(0);
+     * swerveModule.getDirectionMotor().set(0.08);
+     * }
+     */
+    // swerveDriveTrain.getBackRight().getDirectionMotor().set(turn);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -51,5 +62,6 @@ for (HASwerveModule swerveModule : modules) {
      * } else {
      */
     return false;
+
   }
 }
