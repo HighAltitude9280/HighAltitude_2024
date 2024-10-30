@@ -215,6 +215,7 @@ public class HASwerveModule {
         state = SwerveModuleState.optimize(state, getState().angle);
         controlSwerveDirection(state.angle.getRadians());
         controlSwerveSpeed(state.speedMetersPerSecond);
+        System.out.println("AAAAAAAAAAAAAAA");
     }
 
     public boolean onMPSTarget() {
