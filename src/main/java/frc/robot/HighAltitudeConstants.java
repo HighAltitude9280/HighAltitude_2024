@@ -175,14 +175,9 @@ public class HighAltitudeConstants {
          */
         // FEEDBACK //
 
-        public static final double SWERVE_DIRECTION_kP = 0.0; // 0.128
+        public static final double SWERVE_DIRECTION_kP = 0.15; // 0.128
         public static final double SWERVE_DIRECTION_kI = 0; // 0.01
         public static final double SWERVE_DIRECTION_kD = 0; // 0.0128
-
-        // FEEDFORWARD //
-        public static final double SWERVE_DIRECTION_kS = 0;
-        public static final double SWERVE_DIRECTION_kV = 0.01;
-        public static final double SWERVE_DIRECTION_kA = 0; // no sé si dejarlo en 0
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
                         new PIDConstants(0.9, 0, 0.000025), // Translation constants
@@ -236,13 +231,13 @@ public class HighAltitudeConstants {
 
         ////////////////////////// INDEXER //////////////////////////
 
-        public static final double INDEXER_IN_SPEED = 0.7;
-        public static final double INDEXER_OUT_SPEED = -0.7;
+        public static final double INDEXER_IN_SPEED = 0.3;
+        public static final double INDEXER_OUT_SPEED = -0.3;
 
         ////////////////////////// INTAKE //////////////////////////
 
-        public static final double INTAKE_IN_SPEED = 0.6;
-        public static final double INTAKE_OUT_SPEED = -0.6;
+        public static final double INTAKE_IN_SPEED = 0.4;
+        public static final double INTAKE_OUT_SPEED = -0.2;
 
         public static final boolean INTAKE_MOTOR_BRAKING_MODE = false;
 
@@ -298,8 +293,8 @@ public class HighAltitudeConstants {
 
         public static final Pose2d CURRENT_ROBOT_POSE = null;
 
-        public static final double SWERVE_DRIVE_TELEOP_MAX_SPEED_METERS_PER_SECOND = 0.87;
+        public static final double SWERVE_DRIVE_TELEOP_MAX_SPEED_METERS_PER_SECOND = 0.5;// 0.87
 
-        public static final double SWERVE_DIRECTION_TELEOP_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI * 0.85;
+        public static final double SWERVE_DIRECTION_TELEOP_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI * 0.5;
 
 }

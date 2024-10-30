@@ -27,14 +27,14 @@ public class ShooterPivotUp extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterPivot.driveShooterPivot(0.35);
+    shooterPivot.driveShooterPivot(0.1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     shooterPivot.driveShooterPivot(0);
-    shooterPivot.setCurrentTarget(shooterPivot.getShooterPivotPositionInDegrees());
+    //shooterPivot.setCurrentTarget(shooterPivot.getShooterPivotPositionInDegrees());
   }
 
   // Returns true when the command should end.

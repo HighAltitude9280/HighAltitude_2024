@@ -58,7 +58,8 @@ public class HighAltitudeSwerveModule {
         directionMotor.setBrakeMode(true);
         this.isDirectionEncoderReversed = isDirectionEncoderReversed;
 
-        directionPIDController = new PIDController(0.128, 0.01, 0.0128); // 125, 01, 0125
+        directionPIDController = new PIDController(HighAltitudeConstants.SWERVE_DIRECTION_kP,
+                HighAltitudeConstants.SWERVE_DIRECTION_kI, HighAltitudeConstants.SWERVE_DIRECTION_kD); // 125, 01, 0125
         directionPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
         absoluteEncoderController = new CANcoder(encodedTalonPort);
@@ -154,7 +155,8 @@ public class HighAltitudeSwerveModule {
 
         state = SwerveModuleState.optimize(state, getState().angle);
         driveMotor.set(state.speedMetersPerSecond / HighAltitudeConstants.SWERVE_DRIVE_MAX_SPEED_METERS_PER_SECOND);
-        directionMotor.set(directionPIDController.calculate(getAbsoluteEncoderRad(), state.angle.getRadians()));
+        directionMotor.set(directionPIDController.calculate(getAbsoluteEncoderRad(),
+                state.angle.getRadians()));
     }
 
     public PIDController getPIDController() {
@@ -203,4 +205,10 @@ public class HighAltitudeSwerveModule {
         state = SwerveModuleState.optimize(state, getState().angle);
         SmartDashboard.putNumber(identifier + "PID", state.angle.getDegrees());
     }
+
+    public void isMotorInverted(String identifier) {
+        SmartDashboard.putBoolean(identifier + "motorInverted", directionMotor.getCANSparkMax().getInverted());
+
+    }
+
 }

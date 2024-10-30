@@ -197,7 +197,10 @@ public class SwerveDriveTrain extends SubsystemBase {
     // 5. Set the states to the swerve modules
     SwerveModuleState[] moduleStates = HighAltitudeConstants.SWERVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
     setModuleStates(moduleStates);
-
+    frontLeft.putTestPID("a frontLeftTargetAngle", moduleStates[0]);
+    frontRight.putTestPID("a frontRightTargetAngle", moduleStates[1]);
+    backLeft.putTestPID("a backLeftTargetAnfle", moduleStates[2]);
+    backRight.putTestPID("a backRightTargetAngle", moduleStates[3]);
   }
 
   /**
@@ -482,6 +485,12 @@ public class SwerveDriveTrain extends SubsystemBase {
     frontRight.putProcessedValues("FR");
     backRight.putProcessedValues("BR");
     backLeft.putProcessedValues("BL");
+
+    frontLeft.isMotorInverted("FL");
+    frontRight.isMotorInverted("FR");
+    backRight.isMotorInverted("BR");
+    backLeft.isMotorInverted("BL");
+
     frontLeft.putEncoderValuesInvertedApplied("FL");
     frontRight.putEncoderValuesInvertedApplied("FR");
     backLeft.putEncoderValuesInvertedApplied("BL");
