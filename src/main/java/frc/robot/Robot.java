@@ -32,7 +32,6 @@ public class Robot extends TimedRobot {
     robotContainer = new RobotContainer();
     getRobotContainer().ConfigureButtonBindings();
     getRobotContainer().getShooterPivot().resetCanCoder();
-    getRobotContainer().getShooterPivot().resetZeroValue();
     getRobotContainer().generateAutos();
   }
 

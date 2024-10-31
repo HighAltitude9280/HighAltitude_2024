@@ -424,7 +424,7 @@ public class SwerveDriveTrain extends SubsystemBase {
   }
 
   public boolean pointToSpeaker(double maxPower) {
-    return pointToTarget(HighAltitudeConstants.SPEAKER.toPose2d(), maxPower);
+    return pointToTarget(HighAltitudeConstants.RED_SPEAKER.toPose2d(), maxPower);
   }
 
   public boolean pointToTarget(Pose2d target, double maxPower) {
@@ -460,8 +460,14 @@ public class SwerveDriveTrain extends SubsystemBase {
     defaultDrive(speed, strafe, turnPower);
   }
 
-  public double distanceToSpeaker() {
-    return getPose().getTranslation().getDistance(HighAltitudeConstants.SPEAKER.toPose2d().getTranslation());
+  public double distanceToSpeaker() 
+  {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) 
+    {
+            return getPose().getTranslation().getDistance(HighAltitudeConstants.RED_SPEAKER.toPose2d().getTranslation());
+    }
+          return getPose().getTranslation().getDistance(HighAltitudeConstants.BLUE_SPEAKER.toPose2d().getTranslation());
   }
 
   public boolean getIsOnCompetitiveField() {

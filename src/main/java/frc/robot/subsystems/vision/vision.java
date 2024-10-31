@@ -52,7 +52,7 @@ public class vision extends SubsystemBase {
       // https://docs.wpilib.org/es/stable/docs/software/basic-programming/coordinate-system.html
       fieldLayout = new AprilTagFieldLayout(
           "/home/lvuser/deploy/vision/CustomAprilTagFieldLayout.json");
-
+      
       Transform3d camCorner = new Transform3d(new Translation3d(0, 0, 0),
           new Rotation3d(0f, Math.toRadians(-10), Math.toRadians(190)));
 

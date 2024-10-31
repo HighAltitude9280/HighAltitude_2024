@@ -245,21 +245,52 @@ public class HighAltitudeConstants {
 
         public static final boolean SHOOTER_PIVOT_MOTOR_BRAKING_MODE = true;
 
+        public static final boolean SHOOTER_PIVOT_CANCODER_AVAILABLE = true;
+
+
+        //// CANCODER 
+
+
         // NEVER, ABSOLUTELY NEVER APPROXIMATE THIS, USE ONLY FRACTIONS WITH WHOLE
-        // NUMBERS. SHOOTER PIVOT REVS / MOTOR REVS
-        public static final double SHOOTER_PIVOT_RATIO = ((72.0 * 80.0 * 26.0) / (12.0 * 16.0 * 12.0));
-        // 2592 //124416
-        public static final double SHOOTER_PIVOT_DEGREES_PER_REVOLUTION = 360
-                        / SHOOTER_PIVOT_RATIO;
+        // NUMBERS.                                       SHOOTER PIVOT REVS / ENCODER REVS
+        public static final double SHOOTER_PIVOT_CANCODER_RATIO = 12/48.0;
+        // Encoder units per encoder revolution. 
+        public static final double SHOOTER_PIVOT_CANCODER_UNITS_PER_REV = 1.0;
 
-        public static final double SHOOTER_PIVOT_BRAKING_DEGREES = 0; // 50;
+        // Encoder units per arm revolution. EncUnits*ThisConstant = arm revolutions. 
+        public static final double SHOOTER_PIVOT_CANCODER_UNITS_PER_ARM_REV = 
+                SHOOTER_PIVOT_CANCODER_RATIO/SHOOTER_PIVOT_CANCODER_UNITS_PER_REV;
 
-        public static final double SHOOTER_PIVOT_ARRIVE_OFFSET = 0; // 0.05;
+        //// NEO ENCODER
 
-        public static final double SHOOTER_PIVOT_ABSOLUTE_ENCODER_DEGREES_PER_PULSE = 360
-                        / SHOOTER_PIVOT_RATIO;
+        // NEVER, ABSOLUTELY NEVER APPROXIMATE THIS, USE ONLY FRACTIONS WITH WHOLE
+        // NUMBERS.                                        SHOOTER PIVOT REVS / MOTOR REVS
+        public static final double SHOOTER_PIVOT_RATIO = ((12 * 18 * 18* 12.0) / (46* 50 * 46 * 48.0));
+        
+        // Encoder units per encoder revolution. 
+        public static final double SHOOTER_PIVOT_NEO_ENCODER_UNITS_PER_REV = 1.0;
 
+        // Encoder units per arm revolution. EncUnits*ThisConstant = arm revolutions. 
+        public static final double SHOOTER_PIVOT_NEO_ENCODER_UNITS_PER_ARM_REV = 
+                SHOOTER_PIVOT_RATIO/SHOOTER_PIVOT_NEO_ENCODER_UNITS_PER_REV;
+
+
+
+        public static final double SHOOTER_PIVOT_DEGREES_PER_PULSE = 360 * (SHOOTER_PIVOT_CANCODER_AVAILABLE ? 
+                SHOOTER_PIVOT_CANCODER_UNITS_PER_ARM_REV : SHOOTER_PIVOT_NEO_ENCODER_UNITS_PER_ARM_REV);
+
+
+        // The shooter angle when the encoder value is 0.
+        public static final double SHOOTER_PIVOT_ZERO_ANGLE = 5.0; // 65.0;
+
+        //// PID      
+
+        public static final double SHOOTER_PIVOT_ARRIVE_OFFSET = 0.05;
         public static final double SHOOTER_PIVOT_AUTO_MAX_POWER = 0.5;
+
+        public static final double SHOOTER_PIVOT_KP = 0;
+        public static final double SHOOTER_PIVOT_KI = 0;
+        public static final double SHOOTER_PIVOT_KD = 0;
 
         public static final double SHOOTER_PIVOT_UPPER_LIMIT = 0; // 107.7;
         // 107.666015625 Shuffle Report
@@ -267,12 +298,9 @@ public class HighAltitudeConstants {
         public static final double SHOOTER_PIVOT_LOWER_LIMIT = 0.0;
         // 0.17578125 Shuffle Report
 
-        public static final double SHOOTER_PIVOT_ANGLE_CORRECTION_CONSTANT = 0; // 20;
-
         public static final double SHOOTER_PIVOT_PITCH_TO_TARGET_MULTIPLIER = 0; // -0.003;
         public static final double SHOOTER_PIVOT_PITCH_TO_TARGET_OFFSET = 0; // .18;
 
-        public static final double SHOOTER_PIVOT_ZERO_ANGLE = 0; // 65.0;
 
         //////////////////////// DRIVERS ////////////////////////
 
@@ -286,8 +314,11 @@ public class HighAltitudeConstants {
         public static final double PATHFINDING_MAX_ANGULAR_SPEED = Math.PI / 2;
         public static final double PATHFINDING_MAX_ANGULAR_ANGULAR_ACCELERATION = Math.PI;
 
-        public static final Pose3d SPEAKER = new Pose3d(0f, 1.6, 1.64, new Rotation3d());
-        public static final Pose2d AMP_POS = new Pose2d(new Translation2d(3., 4.31), new Rotation2d(-Math.PI / 2));
+        public static final Pose3d RED_SPEAKER = new Pose3d(0f, 5.54, 1.64, new Rotation3d());
+        public static final Pose3d BLUE_SPEAKER = new Pose3d(16.45, 5.54, 1.64, new Rotation3d());
+
+        public static final Pose2d RED_AMP_POS = new Pose2d(new Translation2d(1.82, 7.64), new Rotation2d(-Math.PI / 2));
+        public static final Pose2d BLUE_AMP_POS = new Pose2d(new Translation2d(14.76, 7.64), new Rotation2d(-Math.PI / 2));
 
         public static final double SWERVE_DRIVE_ON_TARGET = 0;
 

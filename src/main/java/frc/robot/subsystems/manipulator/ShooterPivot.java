@@ -6,10 +6,10 @@ package frc.robot.subsystems.manipulator;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.HighAltitudeConstants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
@@ -19,24 +19,19 @@ import frc.robot.subsystems.vision.vision;
 
 public class ShooterPivot extends SubsystemBase {
   HighAltitudeMotorGroup shooterPivotMotors;
-  double ShooterPivotEncoderPosition, shooterPivotPositionDegrees, shooterPivotRawEncoder;
-  double currentTarget;
+  double shooterPivotEncoderPosition, shooterPivotPositionDegrees, shooterPivotRawEncoder;
 
   DigitalInput topLimitSwitch;
   DigitalInput bottomLimitSwitch;
 
   CANcoder absoluteEncoderController;
 
-  double zeroValue = 0;
+  private double encoderTarget = 0.0;
 
-  boolean Override;
+  private PIDController pidController;
 
-  double encoderTarget = 0.0, angleTarget = 65.0;
-
-  SysIdRoutine routine;
-
-  /** Creates a new ShooterPivot. */
-  public ShooterPivot() {
+  public ShooterPivot() 
+  {
 
     shooterPivotMotors = new HighAltitudeMotorGroup(RobotMap.SHOOTER_PIVOT_MOTOR_PORTS,
         RobotMap.SHOOTER_PIVOT_INVERTED_MOTORS_PORTS,
@@ -45,8 +40,11 @@ public class ShooterPivot extends SubsystemBase {
     shooterPivotMotors.setBrakeMode(HighAltitudeConstants.SHOOTER_PIVOT_MOTOR_BRAKING_MODE);
     shooterPivotMotors.setEncoderInverted(RobotMap.SHOOTER_PIVOT_ENCODER_IS_INVERTED);
 
-    absoluteEncoderController = new CANcoder(RobotMap.SHOOTER_PIVOT_ENCODED_TALON_PORT);
-    resetCanCoder();
+    if(HighAltitudeConstants.SHOOTER_PIVOT_CANCODER_AVAILABLE)
+    {
+      absoluteEncoderController = new CANcoder(RobotMap.SHOOTER_PIVOT_ENCODED_TALON_PORT);
+      resetCanCoder();
+    }
 
     if (RobotMap.SHOOTER_PIVOT_TOP_LIMIT_SWITCH_IS_AVAILABLE) {
       topLimitSwitch = new DigitalInput(RobotMap.SHOOTER_PIVOT_TOP_LIMIT_SWITCH_PORT);
@@ -55,25 +53,27 @@ public class ShooterPivot extends SubsystemBase {
     if (RobotMap.SHOOTER_PIVOT_BOTTOM_LIMIT_SWITCH_IS_AVAILABLE) {
       bottomLimitSwitch = new DigitalInput(RobotMap.SHOOTER_PIVOT_BOTTOM_LIMIT_SWITCH_PORT);
     }
-    ;
 
-    currentTarget = getShooterPivotPositionInDegrees();
+    pidController = new PIDController(HighAltitudeConstants.SHOOTER_PIVOT_KP,
+                                      HighAltitudeConstants.SHOOTER_PIVOT_KI,
+                                      HighAltitudeConstants.SHOOTER_PIVOT_KD);
+}                                   
 
-    Override = false;
-
+  public double getShooterPivotPosDegrees() 
+  {
+     return HighAltitudeConstants.SHOOTER_PIVOT_ZERO_ANGLE +
+        (RobotMap.SHOOTER_PIVOT_ENCODED_TALON_INVERTED ? -1.0 : 1.0) 
+        * getShooterPivotEncoderPosition() 
+        * HighAltitudeConstants.SHOOTER_PIVOT_DEGREES_PER_PULSE;
   }
 
-  public double getAbsoluteEncoderDeg() {
-    double angle = HighAltitudeConstants.SHOOTER_PIVOT_ZERO_ANGLE
-        + (RobotMap.SHOOTER_PIVOT_ENCODED_TALON_INVERTED ? -1.0 : 1.0) * getShooterPivotEncoderPosition() * 360;
-    return angle;
-  }
-
-  public void driveShooterPivot(double speed) {
+  public void driveShooterPivot(double speed) 
+  {
     shooterPivotMotors.setAll(speed);
   }
 
-  public void followTarget() {
+  public void followTarget() 
+  {
 
     vision vision = Robot.getRobotContainer().getVision();
     double pitch = vision.getPitch();
@@ -86,41 +86,46 @@ public class ShooterPivot extends SubsystemBase {
 
   }
 
-  public void setEncoderTarget(double target) {
-
+  public void setEncoderTarget(double target) 
+  {
     this.encoderTarget = target;
-
   }
 
-  public double getEncoderTarget() {
+  public double getEncoderTarget() 
+  {
     return encoderTarget;
   }
 
-  public void setAngleTarget(double targetDegrees) {
-
+  public void setAngleTarget(double targetDegrees) 
+  {
     this.encoderTarget = angleToEncoder(targetDegrees);
   }
 
-  public double angleToEncoder(double angleDegrees) {
-    return (RobotMap.SHOOTER_PIVOT_ENCODED_TALON_INVERTED ? -1.0
-        : 1.0) * (angleDegrees - HighAltitudeConstants.SHOOTER_PIVOT_ZERO_ANGLE) / 360;
+  public double angleToEncoder(double angleDegrees) 
+  {
+    return (RobotMap.SHOOTER_PIVOT_ENCODED_TALON_INVERTED ? -1.0: 1.0) 
+      * (angleDegrees - HighAltitudeConstants.SHOOTER_PIVOT_ZERO_ANGLE) 
+      / HighAltitudeConstants.SHOOTER_PIVOT_DEGREES_PER_PULSE;
   }
 
-  public boolean maintainTarget(double maxPower) {
+  public boolean maintainTarget(double maxPower) 
+  {
+    double power = pidController.calculate(getShooterPivotEncoderPosition(), getEncoderTarget());
+    power = Math.clamp(power * maxPower, -maxPower, maxPower);
+    driveShooterPivot(power);
 
     double delta = getEncoderTarget() - getShooterPivotEncoderPosition();
-    double power = delta * HighAltitudeConstants.SHOOTER_PIVOT_ANGLE_CORRECTION_CONSTANT;
-    power = Math.clamp(power * maxPower, -maxPower, maxPower);
-
-    driveShooterPivot(power);
     return Math.abs(delta) < HighAltitudeConstants.SHOOTER_PIVOT_ARRIVE_OFFSET;
   }
 
-  public void pointToSpeaker(double maxPower) {
+  public void pointToSpeaker(double maxPower) 
+  {
+    
     pointToSpeaker(Robot.getRobotContainer().getSwerveDriveTrain().distanceToSpeaker(), maxPower);
   }
 
-  public void pointToSpeaker(double distance, double maxPower) {
+  public void pointToSpeaker(double distance, double maxPower) 
+  {
     setAngleTarget(distanceToAngle(distance));
     maintainTarget(maxPower);
   }
@@ -129,41 +134,18 @@ public class ShooterPivot extends SubsystemBase {
     shooterPivotMotors.resetEncoder();
   }
 
-  public double getShooterPivotPositionInDegrees() {
-    return shooterPivotPositionDegrees;
+  public void resetCanCoder() 
+  {
+    if(HighAltitudeConstants.SHOOTER_PIVOT_CANCODER_AVAILABLE)
+      absoluteEncoderController.setPosition(0);
   }
 
-  public double getCurrentTarget() {
-    return currentTarget;
-  }
-
-  public void setCurrentTarget(double Target) {
-    currentTarget = Target;
-  }
-
-  public boolean getOverride() {
-    return Override;
-  }
-
-  public void toggleOverride() {
-    Override = !Override;
-  }
-
-  public void resetCanCoder() {
-    absoluteEncoderController.setPosition(0);
-    // zeroValue = absoluteEncoderController.getPosition().getValueAsDouble();
-  }
-
-  public void resetZeroValue() {
-    zeroValue = 0;
-  }
-
-  public double getShooterPivotRawEncoder() {
-    return shooterPivotRawEncoder;
-  }
-
-  public double getShooterPivotEncoderPosition() {
-    return ShooterPivotEncoderPosition;
+  public double getShooterPivotEncoderPosition() 
+  {
+    if(HighAltitudeConstants.SHOOTER_PIVOT_CANCODER_AVAILABLE)
+      return absoluteEncoderController.getAbsolutePosition().getValueAsDouble();
+    else
+      return shooterPivotMotors.getEncoderPosition();
   }
 
   /**
@@ -181,21 +163,15 @@ public class ShooterPivot extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    ShooterPivotEncoderPosition = absoluteEncoderController.getAbsolutePosition().getValueAsDouble() -
-        zeroValue;
-
-    shooterPivotPositionDegrees = getAbsoluteEncoderDeg();
-    shooterPivotRawEncoder = absoluteEncoderController.getPosition().getValueAsDouble();
-
-    SmartDashboard.putNumber("Shooter Pivot Raw Abs Encoder",
-        getShooterPivotRawEncoder());
-    SmartDashboard.putNumber("ShooterPivotEncoderTarget", encoderTarget);
-    SmartDashboard.putNumber("Shooter Pivot Encoder Position",
+  public void periodic() 
+  {
+    SmartDashboard.putNumber("ShooterPivotEncoderTarget", getEncoderTarget());
+    SmartDashboard.putNumber("ShooterPivotEncoderPosition",
         getShooterPivotEncoderPosition());
 
-    SmartDashboard.putBoolean("Shooter_Override", Override);
-    SmartDashboard.putNumber("Zero Value shooter pivot", zeroValue);
+    SmartDashboard.putNumber("ShooterPivotAngle", getShooterPivotPosDegrees());
+    SmartDashboard.putNumber("Distance to speaker", 
+      Robot.getRobotContainer().getSwerveDriveTrain().distanceToSpeaker());
   }
 
 }
