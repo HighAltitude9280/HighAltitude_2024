@@ -490,7 +490,6 @@ public class SwerveDriveTrain extends SubsystemBase {
     putAllInfoInSmartDashboard();
     SmartDashboard.putBoolean("a", isFieldOriented);
     SmartDashboard.putNumber("yaw", getPose().getRotation().getDegrees());
-
   }
 
   public void putAllInfoInSmartDashboard() {
