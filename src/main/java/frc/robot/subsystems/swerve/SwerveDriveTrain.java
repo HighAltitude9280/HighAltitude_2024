@@ -423,8 +423,13 @@ public class SwerveDriveTrain extends SubsystemBase {
         HighAltitudeConstants.SWERVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds));
   }
 
-  public boolean pointToSpeaker(double maxPower) {
-    return pointToTarget(HighAltitudeConstants.RED_SPEAKER.toPose2d(), maxPower);
+  public boolean pointToSpeaker(double maxPower) 
+  {
+    var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+            return pointToTarget(HighAltitudeConstants.RED_SPEAKER.toPose2d(), maxPower);
+          }
+          return pointToTarget(HighAltitudeConstants.BLUE_SPEAKER.toPose2d(), maxPower);
   }
 
   public boolean pointToTarget(Pose2d target, double maxPower) {
@@ -481,15 +486,14 @@ public class SwerveDriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-    // updateOdometryWithVision();
-    // putAllInfoInSmartDashboard();
+    updateOdometryWithVision();
+    putAllInfoInSmartDashboard();
     SmartDashboard.putBoolean("a", isFieldOriented);
     SmartDashboard.putNumber("yaw", getPose().getRotation().getDegrees());
 
   }
 
   public void putAllInfoInSmartDashboard() {
-
     frontLeft.putProcessedValues("FL");
     frontRight.putProcessedValues("FR");
     backRight.putProcessedValues("BR");

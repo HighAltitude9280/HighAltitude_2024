@@ -7,6 +7,7 @@ package frc.robot.subsystems.manipulator.Shooter;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.HighAltitudeConstants;
@@ -93,13 +94,22 @@ public class Shooter extends SubsystemBase {
     return shooterRightMotors.getEncoderVelocity();
   }
 
-  public boolean controlShooter(int rpm) {
-    double leftOutput = leftFeedforward.calculate(rpm);
-    leftOutput += leftPidController.calculate(getShooterLeftVel(), rpm);
+  public boolean controlShooter(int rpm) 
+  {
+    int leftRPM = rpm, rightRPM = rpm;
+
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red)
+      leftRPM += rpm*HighAltitudeConstants.SHOOTER_SPIN_PCT;
+      else
+      rightRPM += rpm*HighAltitudeConstants.SHOOTER_SPIN_PCT;
+
+    double leftOutput = leftFeedforward.calculate(leftRPM);
+    leftOutput += leftPidController.calculate(getShooterLeftVel(), leftRPM);
     driveLeft(leftOutput);
 
-    double rightOutput = rightFeedforward.calculate(rpm);
-    rightOutput += rightPidController.calculate(getShooterRightVel(), rpm);
+    double rightOutput = rightFeedforward.calculate(rightRPM);
+    rightOutput += rightPidController.calculate(getShooterRightVel(), rightRPM);
     driveRight(rightOutput);
 
     double deltaLeft = rpm - getShooterLeftVel();

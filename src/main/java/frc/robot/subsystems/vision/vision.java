@@ -18,6 +18,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -47,26 +48,30 @@ public class vision extends SubsystemBase {
     estimatedPoseShooter = new ArrayList<>();
 
     AprilTagFieldLayout fieldLayout;
+    /*
     try {
-      // Translation 3d use this doc to know the position on your robot.
-      // https://docs.wpilib.org/es/stable/docs/software/basic-programming/coordinate-system.html
-      fieldLayout = new AprilTagFieldLayout(
-          "/home/lvuser/deploy/vision/CustomAprilTagFieldLayout.json");
-      
-      Transform3d camCorner = new Transform3d(new Translation3d(0, 0, 0),
-          new Rotation3d(0f, Math.toRadians(-10), Math.toRadians(190)));
-
-      poseEstimatorCorner = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-          tagsCameraCorner, camCorner);
-      Transform3d camShooter = new Transform3d(new Translation3d(0, 0, 0),
-          new Rotation3d(0f, Math.toRadians(-10), Math.toRadians(190)));
-      poseEstimatorShooter = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-          tagsCameraShooter, camShooter);
-
+      fieldLayout = new AprilTagFieldLayout("/home/lvuser/deploy/vision/CustomAprilTagFieldLayout.json");
     } catch (IOException e) {
 
       e.printStackTrace();
     }
+    */
+
+    fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+      
+
+    Transform3d camCorner = new Transform3d(new Translation3d(0, 0, 0),
+          new Rotation3d(0f, Math.toRadians(-10), Math.toRadians(190)));
+
+    poseEstimatorCorner = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+          tagsCameraCorner, camCorner);
+
+
+    Transform3d camShooter = new Transform3d(new Translation3d(0, 0, 0),
+          new Rotation3d(0f, Math.toRadians(-10), Math.toRadians(190)));
+          
+    poseEstimatorShooter = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+          tagsCameraShooter, camShooter);
 
     // Initialize pose1 and pose2 after poseEstimators are created
     pose1 = poseEstimatorShooter.update();
