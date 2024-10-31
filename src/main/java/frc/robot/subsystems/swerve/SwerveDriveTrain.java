@@ -475,8 +475,11 @@ public class SwerveDriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometry();
-    updateOdometryWithVision();
-    putAllInfoInSmartDashboard();
+    // updateOdometryWithVision();
+    // putAllInfoInSmartDashboard();
+    SmartDashboard.putBoolean("a", isFieldOriented);
+    SmartDashboard.putNumber("yaw", getPose().getRotation().getDegrees());
+
   }
 
   public void putAllInfoInSmartDashboard() {

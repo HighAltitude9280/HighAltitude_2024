@@ -12,9 +12,12 @@ import frc.robot.commands.manipulator.pivot.ShooterPivotSetAngleTarget;
 import frc.robot.commands.manipulator.pivot.manual.ShooterPivotDown;
 import frc.robot.commands.manipulator.pivot.manual.ShooterPivotUp;
 import frc.robot.commands.manipulator.shooter.ControlShooter;
+import frc.robot.commands.manipulator.shooter.DriveShooter;
 import frc.robot.commands.manipulator.transition.IntakeIndexerIn;
+import frc.robot.commands.manipulator.transition.IntakeIndexerOut;
 import frc.robot.commands.swerve.DefaultSwerveDriveNew;
-import frc.robot.commands.swerve.SolisTestSwerve;import frc.robot.commands.swerve.swerveParameters.ResetOdometryZeros;
+import frc.robot.commands.swerve.SolisTestSwerve;
+import frc.robot.commands.swerve.swerveParameters.ResetOdometryZeros;
 import frc.robot.commands.swerve.swerveParameters.SetIsFieldOriented;
 import frc.robot.resources.joysticks.HighAltitudeJoystick;
 import frc.robot.resources.joysticks.HighAltitudeJoystick.AxisType;
@@ -51,11 +54,13 @@ public class OI {
                 pilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
 
                 pilot.whileTrue(ButtonType.LT, new IntakeIn());
-                pilot.whileTrue(ButtonType.LB, new IntakeOut());
+                pilot.whileTrue(ButtonType.LB, new IntakeIndexerOut());
 
                 // pilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(0, 0.1));
 
-                pilot.whileTrue(ButtonType.RT, new ControlShooter(2000));
+                // pilot.whileTrue(ButtonType.RT, new ControlShooter(2000));
+
+                pilot.whileTrue(ButtonType.RT, new DriveShooter());
                 pilot.whileTrue(ButtonType.RB, new IntakeIndexerIn());
 
             default:
@@ -129,13 +134,13 @@ public class OI {
         switch (HighAltitudeConstants.CURRENT_PILOT) {
 
             case DefaultUser:
-                return -pilot.getAxis(AxisType.RIGHT_X);
+                return pilot.getAxis(AxisType.RIGHT_X);
 
             case Joakin:
-                return -pilot.getAxis(AxisType.RIGHT_X);
+                return pilot.getAxis(AxisType.RIGHT_X);
 
             default:
-                return -pilot.getAxis(AxisType.RIGHT_X);
+                return pilot.getAxis(AxisType.RIGHT_X);
         }
     }
 
