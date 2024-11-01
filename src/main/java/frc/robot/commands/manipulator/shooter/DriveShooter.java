@@ -5,6 +5,7 @@
 package frc.robot.commands.manipulator.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.HighAltitudeConstants;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.resources.joysticks.HighAltitudeJoystick.ButtonType;
@@ -28,8 +29,8 @@ public class DriveShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      shooter.driveLeft(0.87);
-      shooter.driveRight(0.87);
+      shooter.driveLeft(HighAltitudeConstants.SHOOTER_DRIVE_SPEED);
+      shooter.driveRight(HighAltitudeConstants.SHOOTER_DRIVE_SPEED);;
   }
 
   // Called once the command ends or is interrupted.

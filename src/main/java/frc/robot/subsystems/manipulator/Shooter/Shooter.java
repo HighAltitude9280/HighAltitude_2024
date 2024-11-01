@@ -154,7 +154,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Shooter Left Velocity", getShooterLeftVel());
-    SmartDashboard.putNumber("Shooter Bottom Velocity", getShooterRightVel());
+    SmartDashboard.putNumber("Shooter Right Velocity", getShooterRightVel());
     SmartDashboard.putNumber("Proximity", proximitySensor.getAverageValue());
 
     SmartDashboard.putBoolean("ShooterHasNote", hasNote());

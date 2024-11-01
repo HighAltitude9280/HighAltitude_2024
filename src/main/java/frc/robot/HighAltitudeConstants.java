@@ -247,7 +247,7 @@ public class HighAltitudeConstants {
 
         public static final boolean SHOOTER_PIVOT_MOTOR_BRAKING_MODE = true;
 
-        public static final boolean SHOOTER_PIVOT_CANCODER_AVAILABLE = true;
+        public static final boolean SHOOTER_PIVOT_CANCODER_AVAILABLE = false;
 
 
         //// CANCODER 
@@ -283,7 +283,7 @@ public class HighAltitudeConstants {
 
 
         // The shooter angle when the encoder value is 0.
-        public static final double SHOOTER_PIVOT_ZERO_ANGLE = 5.0; // 65.0;
+        public static final double SHOOTER_PIVOT_ZERO_ANGLE = 25.0; // 65.0;
 
         //// PID      
 
@@ -330,5 +330,7 @@ public class HighAltitudeConstants {
                         * 0.87;// 0.87
 
         public static final double SWERVE_DIRECTION_TELEOP_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI * 0.75;
+
+        public static final double SHOOTER_DRIVE_SPEED = 0;
 
 }

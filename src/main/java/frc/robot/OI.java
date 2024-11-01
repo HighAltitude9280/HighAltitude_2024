@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.commands.manipulator.indexer.IndexerIn;
+import frc.robot.commands.manipulator.indexer.IndexerOut;
 import frc.robot.commands.manipulator.intake.IntakeIn;
 import frc.robot.commands.manipulator.intake.IntakeOut;
 import frc.robot.commands.manipulator.pivot.ShooterArmMaintainTo;
@@ -17,6 +19,7 @@ import frc.robot.commands.manipulator.transition.IntakeIndexerIn;
 import frc.robot.commands.manipulator.transition.IntakeIndexerOut;
 import frc.robot.commands.swerve.DefaultSwerveDriveNew;
 import frc.robot.commands.swerve.SolisTestSwerve;
+import frc.robot.commands.swerve.TestDirectionPIDSwerve;
 import frc.robot.commands.swerve.swerveParameters.ResetOdometryZeros;
 import frc.robot.commands.swerve.swerveParameters.SetIsFieldOriented;
 import frc.robot.resources.joysticks.HighAltitudeJoystick;
@@ -48,20 +51,35 @@ public class OI {
                 pilot.onTrue(ButtonType.START, new SetIsFieldOriented(false));
 
                 pilot.onTrueCombo(new ResetOdometryZeros(), ButtonType.START, ButtonType.BACK);
-                pilot.onTrue(ButtonType.X, new DefaultSwerveDriveNew());
 
-                pilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
-                pilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
+                pilot.whileTrue(ButtonType.X, new TestDirectionPIDSwerve());
 
-                pilot.whileTrue(ButtonType.LT, new IntakeIn());
-                pilot.whileTrue(ButtonType.LB, new IntakeIndexerOut());
+                // copilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
+                // copilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
+
+                // copilot.whileTrue(ButtonType.LT, new IntakeIndexerIn());
+                // copilot.whileTrue(ButtonType.LB, new IndexerIn());
+
+                // copilot.whileTrue(ButtonType.RT, new IntakeIndexerOut());
+                // copilot.whileTrue(ButtonType.RB, new IndexerOut());
+
+                // copilot.onTrue(ButtonType.A, new DriveShooter());
 
                 // pilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(0, 0.1));
+                // pilot.whileTrue(ButtonType.A, new ControlShooter(2000));
 
-                // pilot.whileTrue(ButtonType.RT, new ControlShooter(2000));
+            case Yare:
 
-                pilot.whileTrue(ButtonType.RT, new DriveShooter());
-                pilot.whileTrue(ButtonType.RB, new IntakeIndexerIn());
+                pilot = new HighAltitudeJoystick(0, JoystickType.XBOX);
+
+                pilot.setAxisDeadzone(AxisType.LEFT_X, 0.1);
+                pilot.setAxisDeadzone(AxisType.LEFT_Y, 0.1);
+                pilot.setAxisDeadzone(AxisType.RIGHT_X, 0.1);
+
+                pilot.onTrue(ButtonType.BACK, new SetIsFieldOriented(true));
+                pilot.onTrue(ButtonType.START, new SetIsFieldOriented(false));
+
+                pilot.onTrueCombo(new ResetOdometryZeros(), ButtonType.START, ButtonType.BACK);
 
             default:
                 break;
@@ -69,20 +87,23 @@ public class OI {
         }
         switch (HighAltitudeConstants.CURRENT_COPILOT) {
 
-            case DefaultUser:
+            case Carlos:
 
                 copilot = new HighAltitudeJoystick(1, JoystickType.XBOX);
 
                 copilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
                 copilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
 
-                copilot.whileTrue(ButtonType.LT, new IntakeIn());
-                copilot.whileTrue(ButtonType.LB, new IntakeOut());
+                copilot.whileTrue(ButtonType.LT, new IntakeIndexerIn());
+                copilot.whileTrue(ButtonType.LB, new IndexerIn());
+
+                copilot.whileTrue(ButtonType.RT, new IntakeIndexerOut());
+                copilot.whileTrue(ButtonType.RB, new IndexerOut());
+
+                copilot.onTrue(ButtonType.A, new DriveShooter());
 
                 // copilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(0, 0.1));
-
-                copilot.whileTrue(ButtonType.RT, new ControlShooter(2000));
-                copilot.whileTrue(ButtonType.RB, new IntakeIndexerIn());
+                // copilot.onTrue(ButtonType.RT, new ControlShooter(2000));
 
                 break;
             default:
