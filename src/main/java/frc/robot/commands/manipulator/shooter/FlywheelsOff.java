@@ -2,21 +2,22 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.manipulator.pivot.manual;
+package frc.robot.commands.manipulator.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.HighAltitudeConstants;
+import frc.robot.OI;
 import frc.robot.Robot;
-import frc.robot.subsystems.manipulator.ShooterPivot;
+import frc.robot.resources.joysticks.HighAltitudeJoystick.ButtonType;
+import frc.robot.subsystems.manipulator.Shooter.Shooter;
 
-public class ShooterPivotUp extends Command {
-  ShooterPivot shooterPivot;
+public class FlywheelsOff extends Command {
+  Shooter shooter;
 
-  /** Creates a new ShooterPivotDown. */
-  public ShooterPivotUp() {
-    shooterPivot = Robot.getRobotContainer().getShooterPivot();
-
-    addRequirements(shooterPivot);
+  /** Creates a new DriveShooter. */
+  public FlywheelsOff() {
+    shooter = Robot.getRobotContainer().getShooter();
+    addRequirements(shooter);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -28,14 +29,14 @@ public class ShooterPivotUp extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterPivot.driveShooterPivot(HighAltitudeConstants.SHOOTER_PIVOT_TELEOP_POWER);
+    shooter.driveLeft(0);
+    shooter.driveRight(0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooterPivot.driveShooterPivot(0);
-    //shooterPivot.setCurrentTarget(shooterPivot.getShooterPivotPositionInDegrees());
+    shooter.driveShooter(0);
   }
 
   // Returns true when the command should end.

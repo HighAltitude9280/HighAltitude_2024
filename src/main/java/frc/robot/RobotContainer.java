@@ -152,6 +152,7 @@ public class RobotContainer {
 
     public void generateAutos() {
         // NamedCommands.registerCommand("ShootPreloaded", new TestSwerve(1));
-        // m_chooser.setDefaultOption("Nothing", new WaitCommand(0));
+        m_chooser.setDefaultOption("Nothing", new WaitCommand(0));
+        m_chooser.addOption("Auto Leave", new PathPlannerAuto("GoStraight"));
     }
 }

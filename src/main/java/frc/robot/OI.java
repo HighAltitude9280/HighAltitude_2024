@@ -15,8 +15,10 @@ import frc.robot.commands.manipulator.pivot.manual.ShooterPivotDown;
 import frc.robot.commands.manipulator.pivot.manual.ShooterPivotUp;
 import frc.robot.commands.manipulator.shooter.ControlShooter;
 import frc.robot.commands.manipulator.shooter.DriveShooter;
+import frc.robot.commands.manipulator.shooter.FlywheelsOff;
 import frc.robot.commands.manipulator.transition.IntakeIndexerIn;
 import frc.robot.commands.manipulator.transition.IntakeIndexerOut;
+import frc.robot.commands.manipulator.transition.IntakeSource;
 import frc.robot.commands.swerve.DefaultSwerveDriveNew;
 import frc.robot.commands.swerve.SolisTestSwerve;
 import frc.robot.commands.swerve.TestDirectionPIDSwerve;
@@ -54,16 +56,16 @@ public class OI {
 
                 pilot.whileTrue(ButtonType.X, new TestDirectionPIDSwerve());
 
-                // copilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
-                // copilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
+                // pilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
+                // pilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
 
-                // copilot.whileTrue(ButtonType.LT, new IntakeIndexerIn());
-                // copilot.whileTrue(ButtonType.LB, new IndexerIn());
+                pilot.whileTrue(ButtonType.LT, new IntakeIndexerIn());
+                // pilot.whileTrue(ButtonType.LB, new IndexerIn());
 
-                // copilot.whileTrue(ButtonType.RT, new IntakeIndexerOut());
-                // copilot.whileTrue(ButtonType.RB, new IndexerOut());
+                // pilot.whileTrue(ButtonType.RT, new IntakeIndexerOut());
+                // pilot.whileTrue(ButtonType.RB, new IndexerOut());
 
-                // copilot.onTrue(ButtonType.A, new DriveShooter());
+                // pilot.onTrue(ButtonType.A, new DriveShooter());
 
                 // pilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(0, 0.1));
                 // pilot.whileTrue(ButtonType.A, new ControlShooter(2000));
@@ -76,10 +78,17 @@ public class OI {
                 pilot.setAxisDeadzone(AxisType.LEFT_Y, 0.1);
                 pilot.setAxisDeadzone(AxisType.RIGHT_X, 0.1);
 
+                pilot.whileTrue(ButtonType.X, new TestDirectionPIDSwerve());
+
                 pilot.onTrue(ButtonType.BACK, new SetIsFieldOriented(true));
                 pilot.onTrue(ButtonType.START, new SetIsFieldOriented(false));
 
                 pilot.onTrueCombo(new ResetOdometryZeros(), ButtonType.START, ButtonType.BACK);
+
+                pilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
+                pilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
+
+                pilot.whileTrue(ButtonType.X, new IntakeSource());
 
             default:
                 break;
@@ -101,8 +110,14 @@ public class OI {
                 copilot.whileTrue(ButtonType.RB, new IndexerOut());
 
                 copilot.onTrue(ButtonType.A, new DriveShooter());
+                copilot.onTrue(ButtonType.B, new FlywheelsOff());
 
-                // copilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(0, 0.1));
+                copilot.whileTrue(ButtonType.X, new IntakeSource());
+
+                //copilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(0, 0.1));
+
+                copilot.onTrue(ButtonType.X, new ShooterArmMaintainTo(90, 0.1));
+
                 // copilot.onTrue(ButtonType.RT, new ControlShooter(2000));
 
                 break;
@@ -124,13 +139,13 @@ public class OI {
         switch (HighAltitudeConstants.CURRENT_PILOT) {
 
             case DefaultUser:
-                return -pilot.getAxis(AxisType.LEFT_Y);
+                return pilot.getAxis(AxisType.LEFT_Y);
 
             case Joakin:
-                return -pilot.getAxis(AxisType.LEFT_Y);
+                return pilot.getAxis(AxisType.LEFT_Y);
 
             default:
-                return -pilot.getAxis(AxisType.LEFT_Y);
+                return pilot.getAxis(AxisType.LEFT_Y);
 
         }
     }
@@ -140,13 +155,13 @@ public class OI {
         switch (HighAltitudeConstants.CURRENT_PILOT) {
 
             case DefaultUser:
-                return -pilot.getAxis(AxisType.LEFT_X);
+                return pilot.getAxis(AxisType.LEFT_X);
 
             case Joakin:
-                return -pilot.getAxis(AxisType.LEFT_X);
+                return pilot.getAxis(AxisType.LEFT_X);
 
             default:
-                return -pilot.getAxis(AxisType.LEFT_X);
+                return pilot.getAxis(AxisType.LEFT_X);
         }
     }
 

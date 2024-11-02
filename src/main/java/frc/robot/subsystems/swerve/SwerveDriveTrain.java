@@ -163,7 +163,7 @@ public class SwerveDriveTrain extends SubsystemBase {
   }
 
   public double getHeadingCCWPositive() {
-    return Robot.getRobotContainer().getNavx().getYaw();
+    return -Robot.getRobotContainer().getNavx().getYaw();
   }
 
   public Rotation2d getRotation2d() {
