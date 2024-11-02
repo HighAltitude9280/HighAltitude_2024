@@ -314,7 +314,7 @@ public class HighAltitudeConstants {
         public static final double SWERVE_DIRECTION_TELEOP_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI * 0.75;
 
         // TUNNING //
-        public static final double SHOOTER_DRIVE_SPEED = 0.5;
+        public static final double SHOOTER_DRIVE_SPEED = 0.9;
 
         public static final double SHOOTER_PIVOT_TELEOP_POWER = 0.2;
 
@@ -323,8 +323,14 @@ public class HighAltitudeConstants {
         public static final double SHOOTER_PIVOT_ARRIVE_OFFSET = 0.05;
         public static final double SHOOTER_PIVOT_AUTO_MAX_POWER = 0.2;
 
-        public static final double SHOOTER_PIVOT_KP = 0.1;
+        public static final double SHOOTER_PIVOT_KP = 3.0;
         public static final double SHOOTER_PIVOT_KI = 0;
         public static final double SHOOTER_PIVOT_KD = 0;
+
+        public static final double SHOOTER_PIVOT_DRIVE_SPEED = 0.2;
+
+        public static final double SHOOTER_PIVOT_SPEAKER_SETPOINT = 87.5;
+
+        public static final double SHOOTER_PIVOT_AMP_SETPOINT = 145;
 
 }

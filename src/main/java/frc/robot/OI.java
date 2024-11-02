@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.autonomous.primitiveAutos.ShootPreload;
 import frc.robot.commands.manipulator.indexer.IndexerIn;
 import frc.robot.commands.manipulator.indexer.IndexerOut;
 import frc.robot.commands.manipulator.intake.IntakeIn;
@@ -16,6 +17,7 @@ import frc.robot.commands.manipulator.pivot.manual.ShooterPivotUp;
 import frc.robot.commands.manipulator.shooter.ControlShooter;
 import frc.robot.commands.manipulator.shooter.DriveShooter;
 import frc.robot.commands.manipulator.shooter.FlywheelsOff;
+import frc.robot.commands.manipulator.shooter.IntakeSourceArm;
 import frc.robot.commands.manipulator.transition.IntakeIndexerIn;
 import frc.robot.commands.manipulator.transition.IntakeIndexerOut;
 import frc.robot.commands.manipulator.transition.IntakeSource;
@@ -88,8 +90,6 @@ public class OI {
                 pilot.whileTrue(ButtonType.POV_E, new ShooterPivotUp());
                 pilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
 
-                pilot.whileTrue(ButtonType.X, new IntakeSource());
-
             default:
                 break;
 
@@ -104,6 +104,8 @@ public class OI {
                 copilot.whileTrue(ButtonType.POV_W, new ShooterPivotDown());
 
                 copilot.whileTrue(ButtonType.LT, new IntakeIndexerIn());
+                copilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(45, 0.1));
+
                 copilot.whileTrue(ButtonType.LB, new IndexerIn());
 
                 copilot.whileTrue(ButtonType.RT, new IntakeIndexerOut());
@@ -112,12 +114,16 @@ public class OI {
                 copilot.onTrue(ButtonType.A, new DriveShooter());
                 copilot.onTrue(ButtonType.B, new FlywheelsOff());
 
-                copilot.whileTrue(ButtonType.X, new IntakeSource());
+                copilot.whileTrue(ButtonType.X, new IntakeSourceArm());
 
-                //copilot.onTrue(ButtonType.LT, new ShooterArmMaintainTo(0, 0.1));
+                copilot.onTrue(ButtonType.POV_S,
+                        new ShooterArmMaintainTo(HighAltitudeConstants.SHOOTER_PIVOT_SPEAKER_SETPOINT,
+                                HighAltitudeConstants.SHOOTER_PIVOT_DRIVE_SPEED));
+                copilot.onTrue(ButtonType.POV_N,
+                        new ShooterArmMaintainTo(HighAltitudeConstants.SHOOTER_PIVOT_AMP_SETPOINT,
+                                HighAltitudeConstants.SHOOTER_PIVOT_DRIVE_SPEED));
 
-                copilot.onTrue(ButtonType.X, new ShooterArmMaintainTo(90, 0.1));
-
+                copilot.whileTrue(ButtonType.Y, new ShootPreload());
                 // copilot.onTrue(ButtonType.RT, new ControlShooter(2000));
 
                 break;

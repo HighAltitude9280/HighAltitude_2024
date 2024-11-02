@@ -29,8 +29,8 @@ public class DriveShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      shooter.driveLeft(HighAltitudeConstants.SHOOTER_DRIVE_SPEED);
-      shooter.driveRight(HighAltitudeConstants.SHOOTER_DRIVE_SPEED);;
+    shooter.driveLeft(HighAltitudeConstants.SHOOTER_DRIVE_SPEED);
+    shooter.driveRight(HighAltitudeConstants.SHOOTER_DRIVE_SPEED * 1.1);
   }
 
   // Called once the command ends or is interrupted.

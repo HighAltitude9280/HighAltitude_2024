@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Human_Drivers.HumanDrivers;
+import frc.robot.commands.autonomous.primitiveAutos.ShootPreload;
 import frc.robot.commands.swerve.DefaultSwerveDriveNew;
 import frc.robot.commands.swerve.SolisTestSwerve;
 import frc.robot.resources.components.Navx;
@@ -151,8 +152,11 @@ public class RobotContainer {
     }
 
     public void generateAutos() {
-        // NamedCommands.registerCommand("ShootPreloaded", new TestSwerve(1));
+        NamedCommands.registerCommand("ShootPreload", new ShootPreload());
+
         m_chooser.setDefaultOption("Nothing", new WaitCommand(0));
         m_chooser.addOption("Auto Leave", new PathPlannerAuto("GoStraight"));
+        m_chooser.addOption("Shoot and Leave Amp Side", new PathPlannerAuto("ShootLeaveAmp"));
+        m_chooser.addOption("Shoot and Leave Source Side", new PathPlannerAuto("ShootLeaveSource"));
     }
 }

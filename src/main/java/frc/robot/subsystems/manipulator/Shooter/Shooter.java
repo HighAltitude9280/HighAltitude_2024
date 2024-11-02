@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems.manipulator.Shooter;
 
+import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorSensorV3.RawColor;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -23,6 +26,7 @@ public class Shooter extends SubsystemBase {
   private boolean rpmOnTarget = false;
 
   private AnalogInput proximitySensor;
+  ColorSensorV3 shooterColorSensor;
 
   private PIDController leftPidController;
   private PIDController rightPidController;
@@ -38,7 +42,6 @@ public class Shooter extends SubsystemBase {
     shooterRightMotors = new HighAltitudeMotorGroup(RobotMap.SHOOTER_RIGHT_MOTOR_PORTS,
         RobotMap.SHOOTER_RIGHT_INVERTED_MOTORS_PORTS,
         RobotMap.SHOOTER_RIGHT_MOTOR_TYPES);
-
 
     shooterLeftMotors.setEncoderInverted(RobotMap.SHOOTER_LEFT_ENCODER_IS_INVERTED);
     shooterRightMotors.setEncoderInverted(RobotMap.SHOOTER_RIGHT_ENCODER_IS_INVERTED);
@@ -94,15 +97,14 @@ public class Shooter extends SubsystemBase {
     return shooterRightMotors.getEncoderVelocity();
   }
 
-  public boolean controlShooter(int rpm) 
-  {
+  public boolean controlShooter(int rpm) {
     int leftRPM = rpm, rightRPM = rpm;
 
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red)
-      leftRPM += rpm*HighAltitudeConstants.SHOOTER_SPIN_PCT;
-      else
-      rightRPM += rpm*HighAltitudeConstants.SHOOTER_SPIN_PCT;
+      leftRPM += rpm * HighAltitudeConstants.SHOOTER_SPIN_PCT;
+    else
+      rightRPM += rpm * HighAltitudeConstants.SHOOTER_SPIN_PCT;
 
     double leftOutput = leftFeedforward.calculate(leftRPM);
     leftOutput += leftPidController.calculate(getShooterLeftVel(), leftRPM);
@@ -131,15 +133,30 @@ public class Shooter extends SubsystemBase {
       Robot.getRobotContainer().getIndexer().indexerOut();
   }
 
-  public boolean hasNote() {
-    return proximitySensor.getAverageValue() > 1000;
-  }
+  /*
+   * public RawColor detectedColor() {
+   * return shooterColorSensor.getRawColor();
+   * }
+   * 
+   * public double getDetectedColorRed() {
+   * return shooterColorSensor.getRawColor().red;
+   * }
+   * 
+   * public int getProximity() {
+   * return proximitySensor.getAverageValue();
+   * }
+   * 
+   * public boolean hasNote() {
+   * return shooterColorSensor.getRawColor().red >= 500;
+   * }
+   */
 
   public boolean onRPMTarget() {
     return rpmOnTarget;
   }
 
   /**
+   * |
    * Converts distance (in meters) to ideal RPM shooting power. This should be
    * mapped at each event with the actual field.
    * 
@@ -157,7 +174,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Right Velocity", getShooterRightVel());
     SmartDashboard.putNumber("Proximity", proximitySensor.getAverageValue());
 
-    SmartDashboard.putBoolean("ShooterHasNote", hasNote());
+    //SmartDashboard.putBoolean("ShooterHasNote", hasNote());
 
   }
 }
