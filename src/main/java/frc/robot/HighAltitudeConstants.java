@@ -208,6 +208,8 @@ public class HighAltitudeConstants {
 
         ////////////////////////// SHOOTER //////////////////////////
 
+        public static final double SHOOTER_VELOCITY_DROP_THRESHOLD = 100;
+
         public static final boolean SHOOTER_MOTORS_BRAKING_MODE = false;
         public static final double SHOOTER_RPM_TO_POWER = 1f / 5000f;
         public static final double SHOOTER_RPM_STEP = 0.000004;
